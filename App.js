@@ -1,20 +1,25 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { Component } from "react";
+import { createStackNavigator } from "react-navigation-stack";
+import { createAppContainer } from "react-navigation";
+console.disableYellowBox = true;
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+import WelcomeScreen from "./src/screens/WelcomeScreen";
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+const MainNavigator = createStackNavigator(
+  {
+    WelcomeScreen: {
+      screen: WelcomeScreen,
+      navigationOptions: {
+        title: "Welcome Screen",
+        headerShown: false,
+      },
+    },
   },
-});
+  {
+    initialRouteName: "WelcomeScreen",
+  }
+);
+
+const App = createAppContainer(MainNavigator);
+
+export default App;
