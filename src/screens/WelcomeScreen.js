@@ -40,13 +40,13 @@ export default function WelcomeScreen(props) {
             text="Sign Up"
             icon="adduser"
             type="antdesign"
-            onPress={() => this.props.navigation.navigate("UserRegistration")}
+            onPress={() => props.navigation.navigate("UserRegistration")}
           />
 
           <View>
             <TouchableOpacity
               style={styles.button}
-              onPress={() => this.props.navigation.navigate("LoginScreen")}
+              onPress={() => props.navigation.navigate("LoginScreen")}
             >
               <Text style={styles.text}>Login</Text>
               <Icon name="arrowright" type="antdesign" color="#2E6CB5" />
