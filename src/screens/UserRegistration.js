@@ -64,7 +64,7 @@ export default class UserRegistration extends Component {
           console.log("registration sucess :", userCredentials.user.email);
           this.setState({ error: "" });
           alert("registration sucess!!!");
-          this.props.navigation.navigate("LoginScreen");
+          this.props.navigation.navigate("WelcomeScreen");
         })
         .catch((error) => {
           this.setState({ error: error.message });

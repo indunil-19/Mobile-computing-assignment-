@@ -43,7 +43,7 @@ class LoginScreen extends Component {
                 console.log("Login sucess :", userCredentials.user.email);
                 this.setState({ error: "" });
                 alert("Login sucess!!!");
-                this.props.navigation.navigate("HomeScreen");
+                this.props.navigation.navigate("BottomTab");
               })
               .catch((error) => {
                 this.setState({ error: error.message });

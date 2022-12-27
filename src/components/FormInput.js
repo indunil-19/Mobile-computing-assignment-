@@ -56,11 +56,12 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   inputIcon: {
+    marginTop: 10,
     width: 100,
     height: 100,
   },
   inputs: {
-    height: 25,
+    height: 50,
     marginLeft: 10,
     width: "80%",
   },
