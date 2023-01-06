@@ -7,6 +7,7 @@ import {
   ScrollView,
   FlatList,
   TouchableOpacity,
+  RefreshControl,
 } from "react-native";
 import { FAB, Avatar, Card, IconButton } from "react-native-paper";
 import { auth, database } from "../../firebase";
@@ -16,17 +17,24 @@ import VehicleScreen from "./VehicleScreen";
 import VehicleProfileScreen from "./claim/vehicleProfile";
 import ClaimsScreen from "./claim/clams";
 import ClaimFormScreen from "./claim/claimForm";
+import VehicleProfileEdit from "./claim/VehicleProfileEdit";
 
 export default class HomeScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
       vehicles: [],
+      refreshing: false,
     };
+
     this.uid = auth.currentUser.uid;
   }
 
   async componentDidMount() {
+    this.loadData();
+  }
+
+  async loadData() {
     await database
       .ref(`/users/${this.uid}/vehicles/`)
       .once("value")
@@ -34,15 +42,21 @@ export default class HomeScreen extends Component {
         var temp_list = [];
         snapshot.forEach((element) => {
           const data = {
-            uid: element.key,
+            vid: element.key,
             regId: element.val().regId,
             model: element.val().model,
-            owner: element.val().model,
+            owner: element.val().owner,
+            date: element.val().date,
           };
-          this.setState({ vehicles: [...this.state.vehicles, data] });
+          temp_list.push(data);
+        });
+
+        this.setState({
+          vehicles: temp_list,
         });
       })
       .catch((error) => console.log(error));
+    this.setState({ refreshing: false });
   }
 
   render() {
@@ -55,7 +69,17 @@ export default class HomeScreen extends Component {
             style={styles.image}
           />
           <Text style={styles.logo}>Welcome Drivia</Text>
-          <ScrollView>
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={() => {
+                  this.setState({ refreshing: true });
+                  this.loadData();
+                }}
+              />
+            }
+          >
             <FlatList
               data={this.state.vehicles}
               renderItem={({ item, index }) => (
@@ -73,9 +97,9 @@ export default class HomeScreen extends Component {
                     }}
                   >
                     <Card.Title
-                      title="Card Title"
-                      subtitle="Card Subtitle"
-                      left={(props) => <Avatar.Icon {...props} icon="folder" />}
+                      title={`${item.regId}`}
+                      subtitle={`${item?.date}`}
+                      left={(props) => <Avatar.Icon {...props} icon="car" />}
                       right={(props) => {}}
                     />
                   </Card>
@@ -167,6 +191,13 @@ export const HomeNavigator = createStackNavigator(
       screen: ClaimFormScreen,
       navigationOptions: {
         title: "ClaimForm Screen",
+        headerShown: false,
+      },
+    },
+    VehicleProfileEdit: {
+      screen: VehicleProfileEdit,
+      navigationOptions: {
+        title: "Vehicle ProfileEdit",
         headerShown: false,
       },
     },

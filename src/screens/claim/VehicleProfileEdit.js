@@ -1,23 +1,27 @@
 import React, { Component } from "react";
-import { Text, View, StyleSheet, Image, ScrollView } from "react-native";
+import { Text, View, StyleSheet, Image, ScrollView, Alert } from "react-native";
 import { Button } from "react-native-paper";
-import FormInput from "../components/FormInput";
-import ImageGallary from "../components/ImagePicker";
-import { auth, database } from "../../firebase";
+import FormInput from "../../components/FormInput";
+import ImageGallary from "../../components/ImagePicker";
+import { auth, database } from "../../../firebase";
 import uuid from "react-native-uuid";
-import { uploadToFirebase, uriToBlob } from "../services/ImageService";
-import Toast from "react-native-simple-toast";
-
-export default class VehicleRegistration extends Component {
+import { uploadToFirebase, uriToBlob } from "../../services/ImageService";
+import AsyncImage from "../../components/AsyncImage";
+export default class VehicleProfileEdit extends Component {
   constructor(props) {
     super(props);
+    // console.log(this.props.navigation.getParam("images"));
     this.state = {
-      regId: "",
-      model: "",
-      owner: "",
+      vid: this.props.navigation.getParam("vid"),
+      regId: this.props.navigation.getParam("regId"),
+      model: this.props.navigation.getParam("model"),
+      owner: this.props.navigation.getParam("owner"),
       modal: false,
-      images: [],
+      images: this.props.navigation.getParam("images"),
+      imagesNew: [],
+      date: this.props.navigation.getParam("date"),
     };
+    this.uid = auth.currentUser.uid;
   }
 
   async submit() {
@@ -28,7 +32,7 @@ export default class VehicleRegistration extends Component {
       this.state.regId != "" &&
       this.state.owner != "" &&
       this.state.model != "" &&
-      this.state.images.length != 0
+      (this.state.images.length != 0 || this.state?.imagesNew?.length)
     ) {
       this.valid = true;
     } else {
@@ -36,9 +40,10 @@ export default class VehicleRegistration extends Component {
     }
 
     if (this.valid) {
-      const files = [];
+      var files = [];
+      var itemsProcessed = 0;
 
-      this.state.images.forEach(async (image) => {
+      this.state?.imagesNew?.forEach(async (image) => {
         const id = uuid.v4();
         files.push(id);
 
@@ -47,27 +52,33 @@ export default class VehicleRegistration extends Component {
         });
       });
 
+      this.state?.images?.forEach(async (image) => {
+        files.push(image);
+      });
+
       const day = new Date().getDate();
       const month = new Date().getMonth();
       const year = new Date().getFullYear();
-      const date = day + "/" + month + "/" + year;
+      const UpdatedDate = day + "/" + month + "/" + year;
 
       await database
-        .ref(`users/${auth.currentUser.uid}/vehicles/`)
-        .push({
+        .ref(`users/${auth.currentUser.uid}/vehicles/${this.state.vid}`)
+        .set({
           regId: this.state.regId,
           model: this.state.model,
           owner: this.state.owner,
           images: files,
-          date: date,
-          lastUpdated: date,
+          lastUpdated: UpdatedDate,
+          date: this.state.date,
         })
         .then(() => {
-          Toast.show("Vehicle Registration sucessfull.", Toast.LONG);
-          this.props.navigation.navigate("BottomTab");
+          this.props.navigation.navigate("VehicleProfileScreen");
+          // Toast.show("Updated sucessfully");
         });
     }
   }
+
+  async componentDidMount() {}
 
   render() {
     return (
@@ -75,11 +86,11 @@ export default class VehicleRegistration extends Component {
         <View style={styles.container}>
           <View style={styles.content}>
             <Image
-              source={require("../../assets/gps.png")}
+              source={require("../../../assets/gps.png")}
               alignSelf="center"
               style={styles.image}
             />
-            <Text style={styles.logo}>Add Your Vehicle</Text>
+            <Text style={styles.logo}>Edit Your Vehicle</Text>
             <FormInput
               icon="car"
               type="antdesign"
@@ -87,6 +98,7 @@ export default class VehicleRegistration extends Component {
                 this.setState({ regId: val });
               }}
               placeholder="Registration number"
+              value={this.state?.regId}
             />
             <FormInput
               icon="user"
@@ -95,6 +107,7 @@ export default class VehicleRegistration extends Component {
                 this.setState({ model: val });
               }}
               placeholder="Model Name"
+              value={this.state?.model}
             />
             <FormInput
               icon="mail"
@@ -103,6 +116,7 @@ export default class VehicleRegistration extends Component {
                 this.setState({ owner: val });
               }}
               placeholder="Owner Name"
+              value={this.state?.owner}
             />
             <Button
               icon={"upload"}
@@ -113,27 +127,59 @@ export default class VehicleRegistration extends Component {
               Upload Vehicle Images
             </Button>
 
-            <Button
-              icon={""}
-              mode="contained"
-              style={{ marginBottom: 10, width: 200, alignSelf: "center" }}
-              onPress={() => {
-                this.submit();
-              }}
-            >
-              Submit
-            </Button>
-
             <ImageGallary
               modal={this.state.modal}
               closeModal={() => {
                 this.setState({ modal: false });
               }}
-              images={this.state.images}
+              images={this.state?.imagesNew}
               setImages={(val) => {
-                this.setState({ images: val });
+                this.setState({ imagesNew: val });
               }}
             />
+
+            <ScrollView
+              style={{
+                marginVertical: 10,
+              }}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+            >
+              {this.state?.images.map((image, index) => {
+                return (
+                  <View>
+                    <AsyncImage
+                      id={image}
+                      style={{ width: 200, height: 200 }}
+                      onDeleteImage={() => {
+                        this.state.images.splice(index, 1);
+                        this.setState({
+                          images: this.state.images,
+                        });
+                      }}
+                      showDelete={true}
+                    />
+                  </View>
+                );
+              })}
+            </ScrollView>
+
+            <Button
+              icon={"user"}
+              mode="contained"
+              style={{ marginBottom: 10, width: 200, alignSelf: "center" }}
+              onPress={() => {
+                Alert.alert("Confirmation", "Do you want to submit?", [
+                  {
+                    text: "NO",
+                    style: "cancel",
+                  },
+                  { text: "YES", onPress: () => this.submit() },
+                ]);
+              }}
+            >
+              Submit
+            </Button>
           </View>
         </View>
       </ScrollView>

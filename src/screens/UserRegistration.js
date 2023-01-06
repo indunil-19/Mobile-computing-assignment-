@@ -71,7 +71,7 @@ export default class UserRegistration extends Component {
         });
 
       const { currentUser } = auth;
-      // console.log(currentUser);
+      console.log(currentUser);
       await database.ref(`users/${currentUser.uid}/`).set(data);
     }
   }

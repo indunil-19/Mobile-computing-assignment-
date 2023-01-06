@@ -1,19 +1,9 @@
 import React, { Component } from "react";
-import { View, Text, TextInput, StyleSheet } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { Icon } from "react-native-elements";
 
-const FormInput = (props) => {
-  const {
-    icon,
-    placeholder,
-    onChangeText,
-    type,
-    ref,
-    keyboardType,
-    secureTextEntry,
-    onSubmitEditing,
-    value,
-  } = props;
+const TextField = (props) => {
+  const { text, icon, type, value, sub } = props;
   return (
     <View style={styles.inputContainer}>
       <View style={styles.iconTextContainer}>
@@ -23,22 +13,23 @@ const FormInput = (props) => {
           style={styles.inputIcon}
           color="#2E6CB5"
         />
-        <TextInput
-          ref={ref}
-          style={styles.inputs}
-          placeholder={placeholder}
-          keyboardType={keyboardType}
-          underlineColorAndroid="transparent"
-          onChangeText={onChangeText}
-          secureTextEntry={secureTextEntry}
-          onSubmitEditing={onSubmitEditing}
-          required
-          value={value}
-        />
+        <View
+          style={{
+            flexDirection: "row",
+            alignSelf: "center",
+          }}
+        >
+          <Text style={{ marginRight: 5, fontWeight: "bold" }}>{text}</Text>
+          <Text style={{ marginRight: 5, fontWeight: "bold" }}>-----</Text>
+          <Text>{value}</Text>
+        </View>
       </View>
+      {sub}
     </View>
   );
 };
+
+export default TextField;
 
 const styles = StyleSheet.create({
   inputContainer: {
@@ -47,7 +38,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     height: 50,
     marginBottom: 20,
-    flexDirection: "row",
+    // flexDirection: "row",
     // alignItems: "center",
     borderRadius: 10,
   },
@@ -62,11 +53,4 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
   },
-  inputs: {
-    height: 50,
-    marginLeft: 10,
-    width: "80%",
-  },
 });
-
-export default FormInput;

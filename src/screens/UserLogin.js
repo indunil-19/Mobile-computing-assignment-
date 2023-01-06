@@ -3,19 +3,15 @@ import {
   StyleSheet,
   Text,
   View,
-  TextInput,
-  Button,
   TouchableOpacity,
   Image,
-  Alert,
   Switch,
   AsyncStorage,
-  YellowBox,
 } from "react-native";
 import { Icon } from "react-native-elements";
-// import Dialog from "react-native-dialog";
 import { auth, database } from "../../firebase";
 import FormInput from "../components/FormInput";
+import Dialog from "react-native-dialog";
 import ButtonComponent from "../components/ButtonComponent";
 
 class LoginScreen extends Component {
@@ -29,6 +25,44 @@ class LoginScreen extends Component {
       resetPasswordDialog: false,
     };
   }
+  //on toggle
+  //remember user
+  rememberUser = async () => {
+    try {
+      //save email and password ot async storage
+      await AsyncStorage.setItem("EMAIL", this.state.email);
+      await AsyncStorage.setItem("PASSWORD", this.state.password);
+    } catch (error) {
+      console.log("async rememberMe error: " + error);
+    }
+  };
+
+  //toggle remember me
+  toggleRememberMe = (value) => {
+    this.setState({ rememberMe: value });
+    if (value === true) {
+      this.rememberUser();
+    } else {
+      this.forgetUser();
+    }
+  };
+
+  //clear async storage
+  async forgetUser() {
+    try {
+      await AsyncStorage.removeItem("EMAIL");
+      await AsyncStorage.removeItem("PASSWORD");
+    } catch (error) {
+      console.log("async forgetUser error: " + error);
+    }
+  }
+
+  resetPassword() {
+    auth
+      .sendPasswordResetEmail(this.passwordChangeEmail)
+      .then(() => alert("Password reset email sent"))
+      .catch((error) => this.setState({ error: error.message }));
+  }
 
   //sign in user
   signinUser() {
@@ -40,10 +74,9 @@ class LoginScreen extends Component {
             auth
               .signInWithEmailAndPassword(this.state.email, this.state.password)
               .then((userCredentials) => {
-                console.log("Login sucess :", userCredentials.user.email);
                 this.setState({ error: "" });
-                alert("Login sucess!!!");
                 this.props.navigation.navigate("BottomTab");
+                alert("Login sucess!!!");
               })
               .catch((error) => {
                 this.setState({ error: error.message });
@@ -52,7 +85,7 @@ class LoginScreen extends Component {
             this.setState({ error: "your account is not verified yet." });
           }
         } else {
-          // this.setState({ error: "This email is not registered" });
+          this.setState({ error: "This email is not registered" });
         }
       });
     });
@@ -110,34 +143,6 @@ class LoginScreen extends Component {
               </View>
             </View>
 
-            <View>
-              {/* <Dialog.Container visible={this.state.resetPasswordDialog}>
-                <Dialog.Title>Reset password</Dialog.Title>
-                <Dialog.Description>
-                  Enter account email address. Then check your emails for reset
-                  link.
-                </Dialog.Description>
-                <Dialog.Input
-                  onChangeText={(passwordChangeEmail) =>
-                    (this.passwordChangeEmail = passwordChangeEmail)
-                  }
-                  label="Email Address"
-                  placeholder="Enter email"
-                />
-                <Dialog.Button
-                  label="Cancel"
-                  onPress={() => this.setState({ resetPasswordDialog: false })}
-                />
-                <Dialog.Button
-                  label="Confirm"
-                  onPress={() => {
-                    this.setState({ resetPasswordDialog: false });
-                    this.resetPassword();
-                  }}
-                />
-              </Dialog.Container> */}
-            </View>
-
             <ButtonComponent
               icon="arrowright"
               type="antdesign"
@@ -165,7 +170,7 @@ class LoginScreen extends Component {
             </View>
 
             <View>
-              {/* <Dialog.Container visible={this.state.resetPasswordDialog}>
+              <Dialog.Container visible={this.state.resetPasswordDialog}>
                 <Dialog.Title>Reset password</Dialog.Title>
                 <Dialog.Description>
                   Enter account email address. Then check your emails for reset
@@ -189,7 +194,7 @@ class LoginScreen extends Component {
                     this.resetPassword();
                   }}
                 />
-              </Dialog.Container> */}
+              </Dialog.Container>
             </View>
           </View>
         </View>
