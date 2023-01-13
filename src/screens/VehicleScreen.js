@@ -58,14 +58,22 @@ export default class VehicleScreen extends Component {
             icon="menuunfold"
             type="antdesign"
             text="My Claims"
-            onPress={() => this.props.navigation.navigate("ClaimsScreen")}
+            onPress={() =>
+              this.props.navigation.navigate("ClaimsScreen", {
+                vid: this.state.vid,
+              })
+            }
           />
 
           <ButtonComponent
             icon="addfile"
             type="antdesign"
             text="Make A Claim"
-            onPress={() => this.props.navigation.navigate("ClaimFormScreen")}
+            onPress={() =>
+              this.props.navigation.navigate("ClaimFormScreen", {
+                vid: this.state.vid,
+              })
+            }
           />
 
           <ButtonComponent

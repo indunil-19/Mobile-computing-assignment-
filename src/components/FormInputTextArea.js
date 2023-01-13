@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { View, Text, TextInput, StyleSheet } from "react-native";
 import { Icon } from "react-native-elements";
 
-const FormInput = (props) => {
+const FormInputText = (props) => {
   const {
     icon,
     placeholder,
@@ -14,7 +14,6 @@ const FormInput = (props) => {
     onSubmitEditing,
     value,
     default_value,
-    editable,
   } = props;
   return (
     <View style={styles.inputContainer}>
@@ -37,7 +36,7 @@ const FormInput = (props) => {
           required
           value={value}
           defaultValue={default_value}
-          editable={editable}
+          multiline={true}
         />
       </View>
     </View>
@@ -54,6 +53,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     // alignItems: "center",
     borderRadius: 10,
+    height: 200,
+    paddingTop: 5,
   },
   iconTextContainer: {
     marginLeft: 10,
@@ -70,7 +71,9 @@ const styles = StyleSheet.create({
     height: 50,
     marginLeft: 10,
     width: "80%",
+    height: 200,
+    textAlignVertical: "top",
   },
 });
 
-export default FormInput;
+export default FormInputText;

@@ -18,7 +18,7 @@ import VehicleProfileScreen from "./claim/vehicleProfile";
 import ClaimsScreen from "./claim/clams";
 import ClaimFormScreen from "./claim/claimForm";
 import VehicleProfileEdit from "./claim/VehicleProfileEdit";
-
+import ClaimScreen from "./claim/claim";
 export default class HomeScreen extends Component {
   constructor(props) {
     super(props);
@@ -177,6 +177,13 @@ export const HomeNavigator = createStackNavigator(
       screen: VehicleScreen,
       navigationOptions: {
         title: "Vehicle Screen",
+        headerShown: false,
+      },
+    },
+    ClaimProfileScreen: {
+      screen: ClaimScreen,
+      navigationOptions: {
+        title: "Claim Screen",
         headerShown: false,
       },
     },

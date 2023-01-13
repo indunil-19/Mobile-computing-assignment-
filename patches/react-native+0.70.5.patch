@@ -1,12 +1,10 @@
 diff --git a/node_modules/react-native/index.js b/node_modules/react-native/index.js
-index d59ba34..96c5359 100644
+index d59ba34..8023167 100644
 --- a/node_modules/react-native/index.js
 +++ b/node_modules/react-native/index.js
-@@ -434,33 +434,18 @@ module.exports = {
-       );
+@@ -435,32 +435,16 @@ module.exports = {
    },
    // Deprecated Prop Types
-+// Deprecated Prop Types
    get ColorPropType(): $FlowFixMe {
 -    invariant(
 -      false,

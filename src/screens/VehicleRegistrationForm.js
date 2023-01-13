@@ -6,7 +6,7 @@ import ImageGallary from "../components/ImagePicker";
 import { auth, database } from "../../firebase";
 import uuid from "react-native-uuid";
 import { uploadToFirebase, uriToBlob } from "../services/ImageService";
-import Toast from "react-native-simple-toast";
+// import Toast from "react-native-simple-toast";
 
 export default class VehicleRegistration extends Component {
   constructor(props) {
@@ -63,7 +63,7 @@ export default class VehicleRegistration extends Component {
           lastUpdated: date,
         })
         .then(() => {
-          Toast.show("Vehicle Registration sucessfull.", Toast.LONG);
+          // Toast.show("Vehicle Registration sucessfull.", Toast.LONG);
           this.props.navigation.navigate("BottomTab");
         });
     }

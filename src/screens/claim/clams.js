@@ -1,61 +1,149 @@
 import React, { Component } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  ScrollView,
+  FlatList,
+  TouchableOpacity,
+  RefreshControl,
+} from "react-native";
+import { FAB, Avatar, Card, IconButton } from "react-native-paper";
+import { auth, database } from "../../../firebase";
 import { Icon } from "react-native-elements";
 
-const ClaimsScreen = (props) => {
-  const { address, distance, cost, date, nightdrive, vehiclename } = props;
-  return (
-    <View
-      style={{
-        marginTop: 50,
-        marginHorizontal: 10,
-        elevation: 50,
-        backgroundColor: "white",
-        borderRadius: 10,
-      }}
-    >
-      <View style={styles.maincontainer}>
-        <View style={styles.uppercontainer}>
-          <View style={styles.leftContainer}>
-            <View>
-              <Text style={styles.date}>{date}</Text>
-              <Text style={{ color: "#84828C" }}>{"address"}</Text>
-              <Text style={{ color: "#84828C" }}>{"vehiclename"}</Text>
-            </View>
-          </View>
-          {/* <View style={styles.rightContainer}>
-            <Text style={styles.cost}>€{"dcdfdfdfgf"}</Text>
-          </View> */}
-        </View>
-        <View style={styles.lowercontainer}>
-          <View style={styles.icon_text_view}>
-            <Icon name="car" type="antdesign" color="#84828C" />
-            <Text style={{ color: "#84828C" }}> {"distance"} Km</Text>
-          </View>
+export default class ClaimsScreen extends Component {
+  nightdrive = false;
+  constructor(props) {
+    super(props);
+    this.state = {
+      claims: [],
+      refreshing: false,
+      vid: this.props.navigation.getParam("vid"),
+    };
 
-          {nightdrive ? (
-            <View style={styles.icon_text_view}>
-              <Icon name="moon" type="feather" color="#84828C" />
-              <Text style={{ color: "#84828C" }}> Night drive</Text>
-            </View>
-          ) : (
-            <View style={styles.icon_text_view}>
-              <Icon name="sun" type="feather" color="#84828C" />
-              <Text style={{ color: "#84828C" }}> Day Drive </Text>
-            </View>
-          )}
-        </View>
+    this.uid = auth.currentUser.uid;
+  }
 
-        {/* <View
-          style={{
-            borderBottomColor: "#84828C",
-            borderBottomWidth: 1,
-          }}
-        ></View> */}
+  async componentDidMount() {
+    this.loadData();
+  }
+
+  async loadData() {
+    await database
+      .ref(`/users/${this.uid}/vehicles/${this.state.vid}/claims`)
+      .once("value")
+      .then((snapshot) => {
+        console.log(snapshot);
+        var temp_list = [];
+        snapshot.forEach((element) => {
+          const data = {
+            cid: element.key,
+            title: element.val().title,
+            description: element.val().description,
+            imageNew: element.val().imageNew,
+            date: element.val().date,
+            status: element.val().status,
+          };
+          temp_list.push(data);
+        });
+
+        this.setState({
+          claims: temp_list,
+        });
+      })
+      .catch((error) => console.log(error));
+    this.setState({ refreshing: false });
+  }
+  render() {
+    return (
+      <View style={styles.container}>
+        <View style={styles.content}>
+          <Image
+            source={require("../../../assets/driver.png")}
+            alignSelf="center"
+            style={styles.image}
+          />
+          <Text style={styles.logo}>Your Claims</Text>
+          <ScrollView
+            refreshControl={
+              <RefreshControl
+                refreshing={this.state.refreshing}
+                onRefresh={() => {
+                  this.setState({ refreshing: true });
+                  this.loadData();
+                }}
+              />
+            }
+          >
+            <FlatList
+              data={this.state.claims}
+              renderItem={({ item, index }) => (
+                <TouchableOpacity
+                  onPress={() => {
+                    this.props.navigation.navigate("ClaimProfileScreen", {
+                      ...item,
+                      vid: this.state.vid,
+                    });
+                  }}
+                >
+                  <View
+                    style={{
+                      marginTop: 15,
+                      marginBottom: 15,
+                      marginHorizontal: 10,
+                      elevation: 5,
+                      backgroundColor: "white",
+                      borderRadius: 10,
+                    }}
+                  >
+                    <View style={styles.maincontainer}>
+                      <View style={styles.uppercontainer}>
+                        <View style={styles.leftContainer}>
+                          <View>
+                            <Text style={styles.date}>{item.date}</Text>
+                            <Text style={{ color: "#84828C" }}>
+                              {item.title}
+                            </Text>
+                            {/* <Text style={{ color: "#84828C" }}>
+                              {"vehiclename"}
+                            </Text> */}
+                          </View>
+                        </View>
+                      </View>
+                      <View style={styles.lowercontainer}>
+                        <View style={styles.icon_text_view}>
+                          <Icon name="car" type="antdesign" color="#84828C" />
+                          {/* <Text style={{ color: "#84828C" }}>
+                            {" "}
+                            {"distance"} Km
+                          </Text> */}
+                        </View>
+
+                        {item.status == "approved" ? (
+                          <View style={styles.icon_text_view}>
+                            {/* <Icon name="moon" type="feather" color="green" /> */}
+                            <Text style={{ color: "green" }}> Approved</Text>
+                          </View>
+                        ) : (
+                          <View style={styles.icon_text_view}>
+                            {/* <Icon name="circle" type="feather" color="red" /> */}
+                            <Text style={{ color: "red" }}> Pending</Text>
+                          </View>
+                        )}
+                      </View>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              )}
+            />
+          </ScrollView>
+        </View>
       </View>
-    </View>
-  );
-};
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   maincontainer: {
@@ -91,6 +179,38 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     textAlignVertical: "bottom",
   },
+  container: {
+    flex: 1,
+    backgroundColor: "#EFF1F3",
+  },
+  content: {
+    flex: 1,
+    alignSelf: "center",
+    width: "95%",
+  },
+  fab: {
+    position: "absolute",
+    margin: 10,
+    right: 0,
+    bottom: 0,
+    borderRadius: 50,
+  },
+  logo: {
+    fontWeight: "bold",
+    fontSize: 35,
+    color: "#2E6CB5",
+    marginBottom: 35,
+    textAlign: "center",
+  },
+  back: {
+    color: "#373E45",
+    fontSize: 15,
+    textAlign: "center",
+  },
+  image: {
+    marginTop: 50,
+    width: 150,
+    height: 150,
+    resizeMode: "contain",
+  },
 });
-
-export default ClaimsScreen;
