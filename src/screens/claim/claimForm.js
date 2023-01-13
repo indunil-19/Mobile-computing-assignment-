@@ -8,7 +8,12 @@ import uuid from "react-native-uuid";
 import { uploadToFirebase, uriToBlob } from "../../services/ImageService";
 import { auth, database } from "../../../firebase";
 // import Toast from "react-native-simple-toast";
-
+import * as Permissions from "expo-permissions";
+import * as Location from "expo-location";
+import * as TaskManager from "expo-task-manager";
+const LOCATION_TRACKING = "location-tracking";
+let vid = "";
+let cid = "";
 export default class ClaimFormScreen extends Component {
   constructor(props) {
     super(props);
@@ -20,6 +25,19 @@ export default class ClaimFormScreen extends Component {
       imageNew: "",
       status: "started",
     };
+    vid = this.state.vid;
+  }
+
+  async startLocationTracking() {
+    await Location.startLocationUpdatesAsync(LOCATION_TRACKING, {
+      accuracy: Location.Accuracy.Highest,
+      timeInterval: 360000,
+      distanceInterval: 0,
+    });
+    const hasStarted = await Location.hasStartedLocationUpdatesAsync(
+      LOCATION_TRACKING
+    );
+    console.log("tracking started?", hasStarted);
   }
 
   getDate() {
@@ -39,7 +57,19 @@ export default class ClaimFormScreen extends Component {
     return datetime;
   }
 
+  async config() {
+    let res = await Permissions.askAsync(Permissions.LOCATION);
+    if (res.status !== "granted") {
+      console.log("Permission to access location was denied");
+    } else {
+      console.log("Permission to access location granted");
+    }
+  }
+
   async submit() {
+    //location permission
+    this.config();
+
     this.valid = false;
 
     // check if all required fields are filled
@@ -64,7 +94,9 @@ export default class ClaimFormScreen extends Component {
           date: this.getDate(),
           status: "started",
         })
-        .then(() => {
+        .then((r) => {
+          cid = r.key;
+          this.startLocationTracking();
           // Toast.show("Claim is added sucessfull.", Toast.LONG);
           this.props.navigation.navigate("ClaimsScreen", {
             vid: this.state.vid,
@@ -187,4 +219,43 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     padding: 10,
   },
+});
+
+TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {
+  if (error) {
+    console.log("LOCATION_TRACKING task ERROR:", error);
+    return;
+  }
+  if (data) {
+    const { locations } = data;
+
+    const newCoordinate = {
+      latitude: locations[0].coords.latitude,
+      longitude: locations[0].coords.longitude,
+    };
+
+    await database
+      .ref(`/users/${auth.currentUser.uid}/vehicles/${vid}/claims/${cid}`)
+      .once("value")
+      .then(async (snapshot) => {
+        if (snapshot.val()?.locations?.length) {
+          const locations = snapshot.val()?.locations;
+          locations.push(newCoordinate);
+          if (snapshot.val()?.locations?.length < 30) {
+            await database
+              .ref(
+                `/users/${auth.currentUser.uid}/vehicles/${vid}/claims/${cid}`
+              )
+              .update({ locations: locations });
+          } else {
+            await Location.stopLocationUpdatesAsync("location-tracking");
+          }
+        } else {
+          await database
+            .ref(`/users/${auth.currentUser.uid}/vehicles/${vid}/claims/${cid}`)
+            .update({ locations: [newCoordinate] });
+        }
+      })
+      .catch((error) => console.log(error));
+  }
 });

@@ -35,7 +35,7 @@ export default class ClaimsScreen extends Component {
       .ref(`/users/${this.uid}/vehicles/${this.state.vid}/claims`)
       .once("value")
       .then((snapshot) => {
-        console.log(snapshot);
+        // console.log(snapshot);
         var temp_list = [];
         snapshot.forEach((element) => {
           const data = {
