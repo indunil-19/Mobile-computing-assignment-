@@ -8,6 +8,7 @@ import {
   FlatList,
   TouchableOpacity,
   RefreshControl,
+  AsyncStorage,
 } from "react-native";
 import { FAB, Avatar, Card, IconButton } from "react-native-paper";
 import { auth, database } from "../../firebase";
@@ -19,6 +20,16 @@ import ClaimsScreen from "./claim/clams";
 import ClaimFormScreen from "./claim/claimForm";
 import VehicleProfileEdit from "./claim/VehicleProfileEdit";
 import ClaimScreen from "./claim/claim";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
+
 export default class HomeScreen extends Component {
   constructor(props) {
     super(props);
@@ -29,8 +40,18 @@ export default class HomeScreen extends Component {
 
     this.uid = auth.currentUser.uid;
   }
-
   async componentDidMount() {
+    // await AsyncStorage.setItem("badge", 0);
+    // registerForPushNotificationsAsync().then((token) => {});
+    // // This listener is fired whenever a notification is received while the app is foregrounded
+    // Notifications.addNotificationReceivedListener(async (notification) => {
+    //   // console.log(await Notifications.getBadgeCountAsync());
+    //   // await Notifications.setBadgeCountAsync(1);
+    // });
+
+    // // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
+    // Notifications.addNotificationResponseReceivedListener((response) => {});
+
     this.loadData();
   }
 
@@ -110,7 +131,7 @@ export default class HomeScreen extends Component {
           <FAB
             icon="plus"
             style={styles.fab}
-            onPress={() => {
+            onPress={async () => {
               this.props.navigation.navigate("VehicleRegistration");
             }}
           />
@@ -213,3 +234,38 @@ export const HomeNavigator = createStackNavigator(
     initialRouteName: "HomeScreen",
   }
 );
+
+async function registerForPushNotificationsAsync() {
+  let token;
+  if (Device.isDevice) {
+    const { status: existingStatus } =
+      await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
+      return;
+    }
+    token = (await Notifications.getExpoPushTokenAsync()).data;
+  } else {
+    alert("Must use physical device for Push Notifications");
+  }
+
+  if (Platform.OS === "android") {
+    Notifications.setNotificationChannelAsync("default", {
+      name: "default",
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: "#FF231F7C",
+    });
+  }
+
+  await database
+    .ref(`/users/${auth.currentUser.uid}/`)
+    .update({ token: token });
+
+  return token;
+}

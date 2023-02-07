@@ -65,29 +65,30 @@ class LoginScreen extends Component {
   }
 
   //sign in user
-  signinUser() {
-    database.ref(`/users/`).on("value", (snapshot) => {
-      snapshot.forEach((childSub) => {
-        if (childSub.val().email == this.state.email) {
-          if (childSub.val().valid) {
-            //compare email and password against firebase authentication
-            auth
-              .signInWithEmailAndPassword(this.state.email, this.state.password)
-              .then((userCredentials) => {
-                this.setState({ error: "" });
-                this.props.navigation.navigate("BottomTab");
-                alert("Login sucess!!!");
-              })
-              .catch((error) => {
-                this.setState({ error: error.message });
-              });
-          } else {
-            this.setState({ error: "your account is not verified yet." });
-          }
-        } else {
-          this.setState({ error: "This email is not registered" });
-        }
-      });
+  async signinUser() {
+    await database.ref(`/users/`).on("value", (snapshot) => {
+      // console.log(snapshot);
+      // snapshot.forEach((childSub) => {
+      //   if (childSub.val().email == this.state.email) {
+      //     if (childSub.val().valid) {
+      //       //compare email and password against firebase authentication
+      //       auth
+      //         .signInWithEmailAndPassword(this.state.email, this.state.password)
+      //         .then((userCredentials) => {
+      //           this.setState({ error: "" });
+      //           this.props.navigation.navigate("BottomTab");
+      //           alert("Login sucess!!!");
+      //         })
+      //         .catch((error) => {
+      //           this.setState({ error: error.message });
+      //         });
+      //     } else {
+      //       this.setState({ error: "your account is not verified yet." });
+      //     }
+      //   } else {
+      //     this.setState({ error: "This email is not registered" });
+      //   }
+      // });
     });
 
     return;

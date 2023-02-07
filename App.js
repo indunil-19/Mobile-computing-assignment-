@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { View } from "react-native";
+import { View, AsyncStorage } from "react-native";
 import { Icon } from "react-native-elements";
 import { createStackNavigator } from "react-navigation-stack";
 import { createAppContainer } from "react-navigation";
@@ -14,6 +14,10 @@ import { HomeNavigator } from "./src/screens/Home";
 import UserProfile from "./src/screens/UserProfile";
 import NotificationScreen from "./src/screens/NotificationScreen";
 console.disableYellowBox = true;
+
+async function x() {
+  return 5;
+}
 
 const BottomTab = createMaterialBottomTabNavigator(
   {
@@ -44,6 +48,7 @@ const BottomTab = createMaterialBottomTabNavigator(
     NotificationScreen: {
       screen: NotificationScreen,
       navigationOptions: {
+        tabBarBadge: 4,
         tabBarIcon: ({ tintColor }) => {
           return (
             <View>
@@ -103,7 +108,7 @@ const MainNavigator = createStackNavigator(
     },
   },
   {
-    initialRouteName: "BottomTab",
+    initialRouteName: "WelcomeScreen",
   }
 );
 
