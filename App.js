@@ -13,6 +13,12 @@ import VehicleRegistration from "./src/screens/VehicleRegistrationForm";
 import { HomeNavigator } from "./src/screens/Home";
 import UserProfile from "./src/screens/UserProfile";
 import NotificationScreen from "./src/screens/NotificationScreen";
+import SignupSwitcher from "./src/screens/SignupSwitcher";
+import AgentHomeScreen from "./src/screens/agent/AgentHome";
+import AgentRegistrationScreen from "./src/screens/agent/AgentRegistration";
+import AgentNotificationScreen from "./src/screens/agent/AgentNotification";
+import AgentUserProfile from "./src/screens/agent/AgentUserProfile";
+
 console.disableYellowBox = true;
 
 async function x() {
@@ -70,6 +76,57 @@ const BottomTab = createMaterialBottomTabNavigator(
   }
 );
 
+const AgentBottomTab = createMaterialBottomTabNavigator(
+  {
+    HomeScreen: {
+      screen: AgentHomeScreen,
+      navigationOptions: {
+        tabBarIcon: ({ tintColor }) => {
+          return (
+            <View>
+              <Icon name="home" color={tintColor} />
+            </View>
+          );
+        },
+      },
+    },
+    UserProfile: {
+      screen: AgentUserProfile,
+      navigationOptions: {
+        tabBarIcon: ({ tintColor }) => {
+          return (
+            <View>
+              <Icon name="user" type="feather" color={tintColor} />
+            </View>
+          );
+        },
+      },
+    },
+    NotificationScreen: {
+      screen: AgentNotificationScreen,
+      navigationOptions: {
+        tabBarBadge: 4,
+        tabBarIcon: ({ tintColor }) => {
+          return (
+            <View>
+              <Icon name="notifications" type="ionicons" color={tintColor} />
+            </View>
+          );
+        },
+      },
+    },
+  },
+  {
+    initialRouteName: "HomeScreen",
+    activeColor: "#74A4D7",
+    inactiveColor: "white",
+    barStyle: {
+      backgroundColor: "#373E45",
+      elevation: 10,
+    },
+  }
+);
+
 const MainNavigator = createStackNavigator(
   {
     WelcomeScreen: {
@@ -86,6 +143,7 @@ const MainNavigator = createStackNavigator(
         headerShown: false,
       },
     },
+
     LoginScreen: {
       screen: LoginScreen,
       navigationOptions: {
@@ -103,6 +161,27 @@ const MainNavigator = createStackNavigator(
       screen: VehicleRegistration,
       navigationOptions: {
         title: "Vehicle Registration Screen",
+        headerShown: false,
+      },
+    },
+    SignupSwitcher: {
+      screen: SignupSwitcher,
+      navigationOptions: {
+        title: "Selecting User Type",
+        headerShown: false,
+      },
+    },
+    AgentRegistration: {
+      screen: AgentRegistrationScreen,
+      navigationOptions: {
+        title: "Agent Registration Screen",
+        headerShown: false,
+      },
+    },
+
+    AgentBottomTab: {
+      screen: AgentBottomTab,
+      navigationOptions: {
         headerShown: false,
       },
     },

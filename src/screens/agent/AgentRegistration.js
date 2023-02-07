@@ -13,11 +13,11 @@ import {
   YellowBox,
 } from "react-native";
 
-import ButtonComponent from "../components/ButtonComponent";
-import DropdownInput from "../components/DropdownInput";
-import FormInput from "../components/FormInput";
-import { auth, database } from "../../firebase";
-export default class UserRegistration extends Component {
+import ButtonComponent from "../../components/ButtonComponent";
+import DropdownInput from "../../components/DropdownInput";
+import FormInput from "../../components/FormInput";
+import { auth, database } from "../../../firebase";
+export default class AgentRegistrationScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -25,9 +25,8 @@ export default class UserRegistration extends Component {
       lastname: "",
       email: "",
       password: "",
-      licence: "",
+      ID: "",
       error: "",
-      coverage: "",
       valid: false,
     };
   }
@@ -37,9 +36,9 @@ export default class UserRegistration extends Component {
       email: this.state.email,
       firstname: this.state.firstname,
       lastname: this.state.lastname,
-      licence: this.state.licence,
+      ID: this.state.ID,
       valid: this.state.valid,
-      type: "driver",
+      type: "agent",
     };
 
     this.valid = false;
@@ -49,7 +48,7 @@ export default class UserRegistration extends Component {
       data.email != "" &&
       data.firstname != "" &&
       data.lastname != "" &&
-      data.licence != ""
+      data.ID != ""
     ) {
       this.valid = true;
     } else {
@@ -62,7 +61,6 @@ export default class UserRegistration extends Component {
       auth
         .createUserWithEmailAndPassword(this.state.email, this.state.password)
         .then((userCredentials) => {
-          console.log(userCredentials);
           console.log("registration sucess :", userCredentials.user.email);
           this.setState({ error: "" });
           alert("registration success!!!");
@@ -73,7 +71,7 @@ export default class UserRegistration extends Component {
         });
 
       const { currentUser } = auth;
-      console.log(currentUser);
+      // console.log(currentUser);
       await database.ref(`users/${currentUser.uid}/`).set(data);
     }
   }
@@ -83,7 +81,7 @@ export default class UserRegistration extends Component {
       <View style={styles.container}>
         <View style={styles.content}>
           <Image
-            source={require("../../assets/start.png")}
+            source={require("../../../assets/start.png")}
             alignSelf="center"
             style={styles.image}
           />
@@ -120,43 +118,10 @@ export default class UserRegistration extends Component {
           <FormInput
             icon="drivers-license-o"
             type="font-awesome"
-            onChangeText={(value) => this.setState({ licence: value })}
-            placeholder="Driving License ID"
+            onChangeText={(value) => this.setState({ ID: value })}
+            placeholder="Agent ID"
             secureTextEntry={true}
           />
-
-          {/* <DropdownInput
-            icon="drivers-license-o"
-            type="font-awesome"
-            data={[
-              {
-                value: "Full Licence",
-              },
-              {
-                value: "Provisional Licence",
-              },
-            ]}
-            onChangeText={(value) => this.setState({ licence: value })}
-            label="Licence Status"
-          /> */}
-
-          {/* <DropdownInput
-            icon="attach-money"
-            type="material"
-            data={[
-              {
-                value: "Third Party Insurance",
-              },
-              {
-                value: "Third Party Fire & Theft",
-              },
-              {
-                value: "Comprehensive",
-              },
-            ]}
-            onChangeText={(value) => this.setState({ coverage: value })}
-            label="Insurance Coverage"
-          /> */}
 
           <View>
             <Text style={{ justifyContent: "space-around", color: "red" }}>

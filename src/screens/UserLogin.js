@@ -25,6 +25,10 @@ class LoginScreen extends Component {
       resetPasswordDialog: false,
     };
   }
+  // async componentUpdate() {
+  //   const { currentUser } = auth;
+  //   if (currentUser) this.props.navigation.navigate("HomeScreen");
+  // }
   //on toggle
   //remember user
   rememberUser = async () => {
@@ -75,8 +79,13 @@ class LoginScreen extends Component {
               .signInWithEmailAndPassword(this.state.email, this.state.password)
               .then((userCredentials) => {
                 this.setState({ error: "" });
-                this.props.navigation.navigate("BottomTab");
-                alert("Login sucess!!!");
+                if (childSub.val().type == "agent") {
+                  this.props.navigation.navigate("AgentBottomTab");
+                  alert("Login success!!!");
+                } else {
+                  this.props.navigation.navigate("BottomTab");
+                  alert("Login success!!!");
+                }
               })
               .catch((error) => {
                 this.setState({ error: error.message });

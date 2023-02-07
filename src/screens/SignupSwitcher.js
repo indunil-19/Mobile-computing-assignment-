@@ -10,60 +10,11 @@ import {
 } from "react-native";
 import { Icon } from "react-native-elements";
 import ButtonComponent from "../components/ButtonComponent";
-import { auth } from "../../firebase";
 
-export default class WelcomeScreen extends Component {
+export default class SignupSwitcher extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
   }
-  // async componentDidMount() {
-  //   //check is user is remembered
-  //   await this.getRememberedUser();
-
-  //   //user logged out event listener
-  //   // auth.onAuthStateChanged((user) => {
-  //   //   if (!user) {
-  //   //     this.forgetUser();
-  //   //   }
-  //   // });
-  // }
-
-  //check if user is previously remembered
-  getRememberedUser = async () => {
-    try {
-      //make call to async storage
-      const email = await AsyncStorage.getItem("EMAIL");
-      const password = await AsyncStorage.getItem("PASSWORD");
-
-      //user remembered
-      if (email !== null) {
-        //authorise user
-        auth
-          .signInWithEmailAndPassword(email, password)
-          .then(() => {
-            this.props.navigation.navigate("BottomTab");
-          })
-          .catch((error) => {});
-      } else {
-        console.info("User not remembered");
-      }
-    } catch (error) {
-      console.log("async getRememberedUser error: " + error);
-    }
-  };
-
-  //trigger forget user
-  async forgetUser() {
-    try {
-      //empty async storage
-      await AsyncStorage.removeItem("EMAIL");
-      await AsyncStorage.removeItem("PASSWORD");
-    } catch (error) {
-      console.log("async forgetUser error: " + error);
-    }
-  }
-
   render() {
     return (
       <View style={styles.container}>
@@ -90,21 +41,17 @@ export default class WelcomeScreen extends Component {
 
           <View style={{ flex: 3 }}>
             <ButtonComponent
-              text="Sign Up"
+              text="Agent Sign Up"
               icon="adduser"
               type="antdesign"
-              onPress={() => this.props.navigation.navigate("SignupSwitcher")}
+              onPress={() => this.props.navigation.navigate("AgentRegistration")}
             />
-
-            <View>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => this.props.navigation.navigate("LoginScreen")}
-              >
-                <Text style={styles.text}>Login</Text>
-                <Icon name="arrowright" type="antdesign" color="#2E6CB5" />
-              </TouchableOpacity>
-            </View>
+            <ButtonComponent
+              text="Driver Sign Up"
+              icon="adduser"
+              type="antdesign"
+              onPress={() => this.props.navigation.navigate("UserRegistration")}
+            />
           </View>
         </ImageBackground>
       </View>
