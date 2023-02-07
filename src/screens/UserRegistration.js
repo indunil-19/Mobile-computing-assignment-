@@ -64,14 +64,14 @@ export default class UserRegistration extends Component {
           console.log("registration sucess :", userCredentials.user.email);
           this.setState({ error: "" });
           alert("registration sucess!!!");
-          // this.props.navigation.navigate("WelcomeScreen");
+          this.props.navigation.navigate("WelcomeScreen");
         })
         .catch((error) => {
           this.setState({ error: error.message });
         });
 
       const { currentUser } = auth;
-      console.log(currentUser);
+      // console.log(currentUser);
       await database.ref(`users/${currentUser.uid}/`).set(data);
     }
   }
