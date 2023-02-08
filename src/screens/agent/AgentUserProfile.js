@@ -19,8 +19,7 @@ export default class AgentUserProfile extends Component {
       {
         text: "Logout",
         onPress: () => {
-          console.info("EVENT: " + auth.currentUser.email + " logged out");
-          auth.signOut();
+          auth.signOut().then(() => console.log("User signed out!"));
           this.props.navigation.navigate("WelcomeScreen");
         },
       },
