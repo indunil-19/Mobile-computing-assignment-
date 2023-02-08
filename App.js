@@ -5,12 +5,14 @@ import { createStackNavigator } from "react-navigation-stack";
 import { createAppContainer } from "react-navigation";
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 
+import { HomeNavigator } from "./src/screens/Home";
+import { AgentHomeNavigator } from "./src/screens/agent/AgentHome";
+
 import WelcomeScreen from "./src/screens/WelcomeScreen";
 import UserRegistration from "./src/screens/UserRegistration";
 import HomeScreen from "./src/screens/Home";
 import LoginScreen from "./src/screens/UserLogin";
 import VehicleRegistration from "./src/screens/VehicleRegistrationForm";
-import { HomeNavigator } from "./src/screens/Home";
 import UserProfile from "./src/screens/UserProfile";
 import NotificationScreen from "./src/screens/NotificationScreen";
 import SignupSwitcher from "./src/screens/SignupSwitcher";
@@ -79,7 +81,7 @@ const BottomTab = createMaterialBottomTabNavigator(
 const AgentBottomTab = createMaterialBottomTabNavigator(
   {
     HomeScreen: {
-      screen: AgentHomeScreen,
+      screen: AgentHomeNavigator,
       navigationOptions: {
         tabBarIcon: ({ tintColor }) => {
           return (
