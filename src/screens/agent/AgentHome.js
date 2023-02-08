@@ -10,10 +10,14 @@ import {
   RefreshControl,
   AsyncStorage,
 } from "react-native";
+import ButtonComponent from "../../components/ButtonComponent";
 import { FAB, Avatar, Card, IconButton } from "react-native-paper";
 import { auth, database } from "../../../firebase";
-
 import * as Notifications from "expo-notifications";
+import UserApprovalScreen from "./UserApprove";
+import ClaimListScreen from "./ClaimList";
+import { createStackNavigator } from "react-navigation-stack";
+
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -22,97 +26,49 @@ Notifications.setNotificationHandler({
   }),
 });
 
-export default class HomeScreen extends Component {
+export default class AgentHomeScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      vehicles: [],
       refreshing: false,
     };
 
     this.uid = auth.currentUser.uid;
   }
-  async componentDidMount() {
-    this.loadData();
-  }
-
-  async loadData() {
-    await database
-      .ref(`/users/`)
-      .once("value")
-      .then((snapshot) => {
-        snapshot.forEach((element) => {
-          console.log(element);
-        });
-
-        // var temp_list = [];
-        // snapshot.forEach((element) => {
-        //   const data = {
-        //     cid: element.key,
-        //     title: element.val().title,
-        //     description: element.val().description,
-        //     imageNew: element.val().imageNew,
-        //     date: element.val().date,
-        //     status: element.val().status,
-        //   };
-        //   temp_list.push(data);
-        // });
-        // this.setState({
-        //   vehicles: temp_list,
-        // });
-      })
-      .catch((error) => console.log(error));
-    this.setState({ refreshing: false });
-  }
 
   render() {
     return (
       <View style={styles.container}>
-        <View style={styles.content}>
+        <View style={{ flex: 3 }}>
           <Image
             source={require("../../../assets/agent.png")}
-            alignSelf="center"
             style={styles.image}
+            alignSelf="center"
           />
-          <Text style={styles.logo}>Welcome Drivia</Text>
-          <ScrollView
-            refreshControl={
-              <RefreshControl
-                refreshing={this.state.refreshing}
-                onRefresh={() => {
-                  this.setState({ refreshing: true });
-                  this.loadData();
-                }}
-              />
+        </View>
+
+        <View style={{ flex: 4 }}>
+          <ButtonComponent
+            text="Claim List"
+            icon="user"
+            type="antdesign"
+            onPress={() =>
+              this.props.navigation.navigate("ClaimListScreen", {
+                vid: this.state.vid,
+              })
             }
-          >
-            <FlatList
-              data={this.state.vehicles}
-              renderItem={({ item, index }) => (
-                <TouchableOpacity
-                  onPress={() => {
-                    this.props.navigation.navigate("VehicleScreen", item);
-                  }}
-                >
-                  <Card
-                    style={{
-                      marginBottom: 15,
-                      elevation: 50,
-                      paddingVertical: 15,
-                      backgroundColor: "white",
-                    }}
-                  >
-                    {/* <Card.Title
-                      title={`${item.regId}`}
-                      subtitle={`${item?.date}`}
-                      left={(props) => <Avatar.Icon {...props} icon="car" />}
-                      right={(props) => {}}
-                    /> */}
-                  </Card>
-                </TouchableOpacity>
-              )}
-            />
-          </ScrollView>
+          />
+
+          <ButtonComponent
+            icon="menuunfold"
+            type="antdesign"
+            text="User Approve"
+            onPress={() =>
+              this.props.navigation.navigate("UserApprovalScreen", {
+                vid: this.state.vid,
+              })
+            }
+          />
         </View>
       </View>
     );
@@ -155,3 +111,31 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
 });
+export const AgentHomeNavigator = createStackNavigator(
+  {
+    AgentHomeScreen: {
+      screen: AgentHomeScreen,
+      navigationOptions: {
+        title: "Home Screen",
+        headerShown: false,
+      },
+    },
+    UserApprovalScreen: {
+      screen: UserApprovalScreen,
+      navigationOptions: {
+        title: "User Approval Screen",
+        headerShown: false,
+      },
+    },
+    ClaimListScreen: {
+      screen: ClaimListScreen,
+      navigationOptions: {
+        title: "Claim List Screen",
+        headerShown: false,
+      },
+    },
+  },
+  {
+    initialRouteName: "AgentHomeScreen",
+  }
+);
