@@ -53,7 +53,7 @@ export default class VehicleRegistration extends Component {
       const date = day + "/" + month + "/" + year;
 
       await database
-        .ref(`users/${auth.currentUser.uid}/vehicles/`)
+        .ref(`/vehicles/${auth.currentUser.uid}/`)
         .push({
           regId: this.state.regId,
           model: this.state.model,

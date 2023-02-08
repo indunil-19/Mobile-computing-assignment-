@@ -57,7 +57,7 @@ export default class HomeScreen extends Component {
 
   async loadData() {
     await database
-      .ref(`/users/${this.uid}/vehicles/`)
+      .ref(`/vehicles/${this.uid}`)
       .once("value")
       .then((snapshot) => {
         var temp_list = [];

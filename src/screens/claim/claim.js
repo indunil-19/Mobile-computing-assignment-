@@ -60,9 +60,7 @@ export default class ClaimScreen extends Component {
 
   async loadData() {
     await database
-      .ref(
-        `/users/${this.uid}/vehicles/${this.state.vid}/claims/${this.state.cid}`
-      )
+      .ref(`/claims/${this.state.vid}/${this.state.cid}`)
       .once("value")
       .then((snapshot) => {
         this.setState({
@@ -118,9 +116,7 @@ export default class ClaimScreen extends Component {
       const UpdatedDate = day + "/" + month + "/" + year;
 
       await database
-        .ref(
-          `/users/${this.uid}/vehicles/${this.state.vid}/claims/${this.state.cid}`
-        )
+        .ref(`/claims/${this.state.vid}/${this.state.cid}`)
         .set({
           title: this.state.title,
           description: this.state.description,

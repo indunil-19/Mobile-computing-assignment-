@@ -32,7 +32,7 @@ export default class ClaimsScreen extends Component {
 
   async loadData() {
     await database
-      .ref(`/users/${this.uid}/vehicles/${this.state.vid}/claims`)
+      .ref(`/claims/${this.state.vid}`)
       .once("value")
       .then((snapshot) => {
         // console.log(snapshot);

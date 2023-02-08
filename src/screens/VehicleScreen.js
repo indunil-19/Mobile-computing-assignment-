@@ -12,12 +12,12 @@ export default class VehicleScreen extends Component {
 
   async deleteVehicle() {
     await database
-      .ref(`/users/${auth.currentUser.uid}/vehicles/${this.state.vid}/claims`)
+      .ref(`/claims/${this.state.vid}`)
       .once("value")
       .then((snapshot) => {
         if (snapshot != null) {
           database
-            .ref(`/users/${auth.currentUser.uid}/vehicles/${this.state.vid}/`)
+            .ref(`/vehicles/${auth.currentUser.uid}/${this.state.vid}`)
             .remove()
             .then(() => {
               this.props.navigation.navigate("HomeScreen");

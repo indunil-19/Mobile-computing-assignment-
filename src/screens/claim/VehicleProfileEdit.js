@@ -62,7 +62,7 @@ export default class VehicleProfileEdit extends Component {
       const UpdatedDate = day + "/" + month + "/" + year;
 
       await database
-        .ref(`users/${auth.currentUser.uid}/vehicles/${this.state.vid}`)
+        .ref(`/vehicles/${auth.currentUser.uid}/${this.state.vid}`)
         .set({
           regId: this.state.regId,
           model: this.state.model,

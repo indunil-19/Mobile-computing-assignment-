@@ -33,7 +33,7 @@ export default class VehicleProfileScreen extends Component {
 
   async loadData() {
     await database
-      .ref(`/users/${this.uid}/vehicles/${this.state.vid}`)
+      .ref(`/vehicles/${this.uid}/${this.state.vid}`)
       .once("value")
       .then((snapshot) => {
         // console.log(snapshot.val());

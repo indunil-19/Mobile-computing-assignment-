@@ -86,7 +86,7 @@ export default class ClaimFormScreen extends Component {
       });
 
       await database
-        .ref(`users/${auth.currentUser.uid}/vehicles/${this.state.vid}/claims`)
+        .ref(`claims/${this.state.vid}/`)
         .push({
           title: this.state.title,
           description: this.state.description,
@@ -235,7 +235,7 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {
     };
 
     await database
-      .ref(`/users/${auth.currentUser.uid}/vehicles/${vid}/claims/${cid}`)
+      .ref(`/claims/${vid}/${cid}`)
       .once("value")
       .then(async (snapshot) => {
         if (snapshot.val()?.locations?.length) {
@@ -243,16 +243,14 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {
           locations.push(newCoordinate);
           if (snapshot.val()?.locations?.length < 30) {
             await database
-              .ref(
-                `/users/${auth.currentUser.uid}/vehicles/${vid}/claims/${cid}`
-              )
+              .ref(`/claims/${vid}/${cid}`)
               .update({ locations: locations });
           } else {
             await Location.stopLocationUpdatesAsync("location-tracking");
           }
         } else {
           await database
-            .ref(`/users/${auth.currentUser.uid}/vehicles/${vid}/claims/${cid}`)
+            .ref(`/claims/${vid}/${cid}`)
             .update({ locations: [newCoordinate] });
         }
       })
