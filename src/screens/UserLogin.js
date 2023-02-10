@@ -81,11 +81,10 @@ class LoginScreen extends Component {
                 this.setState({ error: "" });
                 if (childSub.val().type == "agent") {
                   this.props.navigation.navigate("AgentBottomTab");
-                  alert("Login success!!!");
                 } else {
                   this.props.navigation.navigate("BottomTab");
-                  alert("Login success!!!");
                 }
+                alert("Login success!!!");
               })
               .catch((error) => {
                 this.setState({ error: error.message });

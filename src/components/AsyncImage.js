@@ -120,7 +120,6 @@ export default class AsyncImage extends React.Component {
               {this.props?.showDelete ? (
                 <TouchableOpacity
                   onPress={() => {
-                    console.log(555);
                     Alert.alert("Confirmation", "Do you want to delete", [
                       {
                         text: "NO",
