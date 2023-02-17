@@ -21,6 +21,8 @@ export default class UserApprovalScreen extends Component {
     this.state = {
       pendingUsers: [],
       refreshing: false,
+      selectedCard: null,
+      selected: false,
     };
   }
   async componentDidMount() {
@@ -39,6 +41,8 @@ export default class UserApprovalScreen extends Component {
               firstname: element.val().firstname,
               lastname: element.val().lastname,
               type: element.val().type,
+              licence: element.val().licence,
+              email: element.val().email,
             };
             temp_list.push(data);
           }
@@ -56,12 +60,16 @@ export default class UserApprovalScreen extends Component {
       .ref(`/users/${userID}`)
       .update({ valid: true })
       .then(() => {
-        console.log("success");
+        const updatedList = this.state.pendingUsers.filter(
+          (item) => item.uid != userID
+        );
+        this.setState({
+          pendingUsers: updatedList,
+        });
         //Toast.show("approved sucessfully");
       })
       .catch((error) => console.log(error));
   }
-
   render() {
     return (
       <View style={styles.container}>
@@ -71,7 +79,8 @@ export default class UserApprovalScreen extends Component {
             alignSelf="center"
             style={styles.image}
           />
-          <ScrollView
+          <FlatList
+            data={this.state.pendingUsers}
             refreshControl={
               <RefreshControl
                 refreshing={this.state.refreshing}
@@ -81,55 +90,67 @@ export default class UserApprovalScreen extends Component {
                 }}
               />
             }
-          >
-            <FlatList
-              data={this.state.pendingUsers}
-              renderItem={({ item, index }) => (
-                <TouchableOpacity onPress={() => {}}>
-                  <Card
-                    style={{
-                      marginBottom: 5,
-                      marginTop: 5,
-                      elevation: 50,
-                      paddingVertical: 0,
-                      backgroundColor: "white",
-                    }}
-                  >
+            renderItem={({ item, index }) => (
+              <TouchableOpacity
+                onPress={() => {
+                  this.setState({
+                    selected: !this.state.selected,
+                    selectedCard: index,
+                  });
+                }}
+              >
+                <Card
+                  style={{
+                    marginBottom: 5,
+                    marginTop: 5,
+                    elevation: 50,
+                    paddingVertical: 0,
+                    backgroundColor: "white",
+                  }}
+                >
+                  <Card.Content>
                     <Card.Title
                       title={`${item.firstname} ${item.lastname} `}
                       subtitle={`${item.type}`}
-                      left={(props) => <Avatar.Icon {...props} icon="car" />}
-                      right={(props) => {}}
-                    />
-                    <Card.Actions>
-                      <Button
-                        onPress={() => {
-                          Alert.alert(
-                            "Confirmation",
-                            "Do you want to approve",
-                            [
-                              {
-                                text: "NO",
-                                style: "cancel",
-                              },
-                              {
-                                text: "YES",
-                                onPress: () => {
-                                  this.approveUser(item?.uid);
+                      left={(props) => <Avatar.Icon {...props} icon="account" />}
+                      right={(props) => (
+                        <Button
+                          style={styles.button}
+                          onPress={() => {
+                            Alert.alert(
+                              "Confirmation",
+                              "Do you want to approve",
+                              [
+                                {
+                                  text: "NO",
+                                  style: "cancel",
                                 },
-                              },
-                            ]
-                          );
-                        }}
-                      >
-                        Approve
-                      </Button>
-                    </Card.Actions>
-                  </Card>
-                </TouchableOpacity>
-              )}
-            />
-          </ScrollView>
+                                {
+                                  text: "YES",
+                                  onPress: () => {
+                                    this.approveUser(item?.uid);
+                                  },
+                                },
+                              ]
+                            );
+                          }}
+                        >
+                          Approve
+                        </Button>
+                      )}
+                    />
+                    {this.state.selected &&
+                      this.state.selectedCard == index && (
+                        <Card.Title
+                          title={`Email: ${item.email} `}
+                          subtitle={`Licence: ${item.licence}`}
+                        />
+                      )}
+                  </Card.Content>
+                </Card>
+              </TouchableOpacity>
+            )}
+          />
         </View>
       </View>
     );
@@ -169,5 +190,8 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     resizeMode: "contain",
+  },
+  button: {
+    backgroundColor: "#dcdcdc",
   },
 });
