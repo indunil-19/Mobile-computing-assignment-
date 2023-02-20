@@ -14,6 +14,7 @@ const FormInputText = (props) => {
     onSubmitEditing,
     value,
     default_value,
+    editable,
   } = props;
   return (
     <View style={styles.inputContainer}>
@@ -37,6 +38,7 @@ const FormInputText = (props) => {
           value={value}
           defaultValue={default_value}
           multiline={true}
+          editable={editable}
         />
       </View>
     </View>
