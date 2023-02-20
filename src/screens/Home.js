@@ -13,7 +13,7 @@ import {
 import { FAB, Avatar, Card, IconButton } from "react-native-paper";
 import { auth, database } from "../../firebase";
 import { createStackNavigator } from "react-navigation-stack";
-
+import DriverCompensationScreen from "./claim/compensation";
 import VehicleScreen from "./VehicleScreen";
 import VehicleProfileScreen from "./claim/vehicleProfile";
 import ClaimsScreen from "./claim/clams";
@@ -22,6 +22,7 @@ import VehicleProfileEdit from "./claim/VehicleProfileEdit";
 import ClaimScreen from "./claim/claim";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
+
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -42,12 +43,16 @@ export default class HomeScreen extends Component {
   }
   async componentDidMount() {
     // await AsyncStorage.setItem("badge", 0);
-    // registerForPushNotificationsAsync().then((token) => {});
+    registerForPushNotificationsAsync().then((token) => {});
     // // This listener is fired whenever a notification is received while the app is foregrounded
-    // Notifications.addNotificationReceivedListener(async (notification) => {
-    //   // console.log(await Notifications.getBadgeCountAsync());
-    //   // await Notifications.setBadgeCountAsync(1);
-    // });
+    Notifications.addNotificationReceivedListener(async (notification) => {
+      // console.log(await Notifications.getBadgeCountAsync());
+      // await Notifications.setBadgeCountAsync(1);
+      await database.ref(`/notiifications/${auth.currentUser.uid}/`).push({
+        title: notification.request.content.title,
+        body: notification.request.content.body,
+      });
+    });
 
     // // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
     // Notifications.addNotificationResponseReceivedListener((response) => {});
@@ -56,27 +61,45 @@ export default class HomeScreen extends Component {
   }
 
   async loadData() {
-    await database
-      .ref(`/vehicles/${this.uid}`)
-      .once("value")
-      .then((snapshot) => {
-        var temp_list = [];
-        snapshot.forEach((element) => {
-          const data = {
-            vid: element.key,
-            regId: element.val().regId,
-            model: element.val().model,
-            owner: element.val().owner,
-            date: element.val().date,
-          };
-          temp_list.push(data);
-        });
+    // await database
+    //   .ref(`/vehicles/${this.uid}`)
+    //   .once("value")
+    //   .then((snapshot) => {
+    //     var temp_list = [];
+    //     snapshot.forEach((element) => {
+    //       const data = {
+    //         vid: element.key,
+    //         regId: element.val().regId,
+    //         model: element.val().model,
+    //         owner: element.val().owner,
+    //         date: element.val().date,
+    //       };
+    //       temp_list.push(data);
+    //     });
 
-        this.setState({
-          vehicles: temp_list,
-        });
-      })
-      .catch((error) => console.log(error));
+    //     this.setState({
+    //       vehicles: temp_list,
+    //     });
+    //   })
+    //   .catch((error) => console.log(error));
+
+    await database.ref(`/vehicles/${this.uid}`).on("value", (snapshot) => {
+      var temp_list = [];
+      snapshot.forEach((element) => {
+        const data = {
+          vid: element.key,
+          regId: element.val().regId,
+          model: element.val().model,
+          owner: element.val().owner,
+          date: element.val().date,
+        };
+        temp_list.push(data);
+      });
+
+      this.setState({
+        vehicles: temp_list,
+      });
+    });
     this.setState({ refreshing: false });
   }
 
@@ -215,6 +238,14 @@ export const HomeNavigator = createStackNavigator(
         headerShown: false,
       },
     },
+    DriverCompensationScreen: {
+      screen: DriverCompensationScreen,
+      navigationOptions: {
+        title: "DriverCompensation Screen",
+        headerShown: false,
+      },
+    },
+
     ClaimFormScreen: {
       screen: ClaimFormScreen,
       navigationOptions: {
