@@ -60,8 +60,9 @@ export default class AgentRegistrationScreen extends Component {
     if (this.valid) {
       auth
         .createUserWithEmailAndPassword(this.state.email, this.state.password)
-        .then((userCredentials) => {
+        .then(async (userCredentials) => {
           console.log("registration sucess :", userCredentials.user.email);
+          await database.ref(`users/${userCredentials.user.uid}/`).set(data);
           this.setState({ error: "" });
           alert("registration success!!!");
           this.props.navigation.navigate("WelcomeScreen");
@@ -70,9 +71,9 @@ export default class AgentRegistrationScreen extends Component {
           this.setState({ error: error.message });
         });
 
-      const { currentUser } = auth;
+      // const { currentUser } = auth;
       // console.log(currentUser);
-      await database.ref(`users/${currentUser.uid}/`).set(data);
+      // await database.ref(`users/${currentUser.uid}/`).set(data);
     }
   }
 

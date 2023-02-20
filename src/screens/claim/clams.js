@@ -31,29 +31,26 @@ export default class ClaimsScreen extends Component {
   }
 
   async loadData() {
-    await database
-      .ref(`/claims/${this.state.vid}`)
-      .once("value")
-      .then((snapshot) => {
-        // console.log(snapshot);
-        var temp_list = [];
-        snapshot.forEach((element) => {
-          const data = {
-            cid: element.key,
-            title: element.val().title,
-            description: element.val().description,
-            imageNew: element.val().imageNew,
-            date: element.val().date,
-            status: element.val().status,
-          };
-          temp_list.push(data);
-        });
+    await database.ref(`/claims/${this.state.vid}`).on("value", (snapshot) => {
+      // console.log(snapshot);
+      var temp_list = [];
+      snapshot.forEach((element) => {
+        const data = {
+          cid: element.key,
+          title: element.val().title,
+          description: element.val().description,
+          imageNew: element.val().imageNew,
+          date: element.val().date,
+          status: element.val().status,
+        };
+        temp_list.push(data);
+      });
 
-        this.setState({
-          claims: temp_list,
-        });
-      })
-      .catch((error) => console.log(error));
+      this.setState({
+        claims: temp_list,
+      });
+    });
+
     this.setState({ refreshing: false });
   }
   render() {

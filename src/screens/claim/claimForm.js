@@ -91,7 +91,7 @@ export default class ClaimFormScreen extends Component {
           title: this.state.title,
           description: this.state.description,
           image: id,
-          date: this.getDate(),
+          date: new Date().toString(),
           status: "started",
         })
         .then((r) => {
@@ -154,7 +154,7 @@ export default class ClaimFormScreen extends Component {
             />
 
             <Button
-              icon={"user"}
+              icon={"content-save-all-outline"}
               mode="contained"
               style={{ marginBottom: 10, width: 200, alignSelf: "center" }}
               onPress={() => {
@@ -234,8 +234,9 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {
       longitude: locations[0].coords.longitude,
     };
 
+    console.log(vid, cid);
     await database
-      .ref(`/claims/${vid}/${cid}`)
+      .ref(`/location/${cid}`)
       .once("value")
       .then(async (snapshot) => {
         if (snapshot.val()?.locations?.length) {
@@ -243,14 +244,14 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {
           locations.push(newCoordinate);
           if (snapshot.val()?.locations?.length < 30) {
             await database
-              .ref(`/claims/${vid}/${cid}`)
+              .ref(`/location/${cid}`)
               .update({ locations: locations });
           } else {
             await Location.stopLocationUpdatesAsync("location-tracking");
           }
         } else {
           await database
-            .ref(`/claims/${vid}/${cid}`)
+            .ref(`/location/${cid}`)
             .update({ locations: [newCoordinate] });
         }
       })

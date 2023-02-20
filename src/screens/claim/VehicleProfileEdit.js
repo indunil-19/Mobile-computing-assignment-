@@ -165,7 +165,7 @@ export default class VehicleProfileEdit extends Component {
             </ScrollView>
 
             <Button
-              icon={"user"}
+              icon={"content-save-all-outline"}
               mode="contained"
               style={{ marginBottom: 10, width: 200, alignSelf: "center" }}
               onPress={() => {

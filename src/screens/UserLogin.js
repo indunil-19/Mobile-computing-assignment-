@@ -159,7 +159,7 @@ class LoginScreen extends Component {
             />
 
             <TouchableOpacity
-              onPress={() => this.props.navigation.navigate("UserRegistration")}
+              onPress={() => this.props.navigation.navigate("SignupSwitcher")}
             >
               <Text style={styles.signup}>Sign Up</Text>
             </TouchableOpacity>

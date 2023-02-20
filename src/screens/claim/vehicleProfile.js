@@ -34,9 +34,7 @@ export default class VehicleProfileScreen extends Component {
   async loadData() {
     await database
       .ref(`/vehicles/${this.uid}/${this.state.vid}`)
-      .once("value")
-      .then((snapshot) => {
-        // console.log(snapshot.val());
+      .on("value", (snapshot) => {
         this.setState({
           regId: snapshot.val().regId,
           model: snapshot.val().model,
@@ -46,8 +44,7 @@ export default class VehicleProfileScreen extends Component {
           lastUpdated: snapshot.val().lastUpdated,
           refreshing: false,
         });
-      })
-      .catch((error) => console.log(error));
+      });
   }
 
   render() {
@@ -122,7 +119,7 @@ export default class VehicleProfileScreen extends Component {
             </ScrollView>
 
             <Button
-              icon={"car-settings"}
+              icon={"file-edit-outline"}
               mode="contained"
               style={{ marginBottom: 10, width: 200, alignSelf: "center" }}
               onPress={() => {

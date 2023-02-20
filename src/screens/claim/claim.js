@@ -8,10 +8,18 @@ import {
   Alert,
   RefreshControl,
 } from "react-native";
+import MapView, {
+  Marker,
+  AnimatedRegion,
+  Polyline,
+  PROVIDER_GOOGLE,
+  Callout,
+} from "react-native-maps";
 import { Button } from "react-native-paper";
 import FormInput from "../../components/FormInput";
 import FormInputText from "../../components/FormInputTextArea";
 import ImageGallarySingle from "../../components/ImagePickerSingle";
+import * as Location from "expo-location";
 import uuid from "react-native-uuid";
 import { uploadToFirebase, uriToBlob } from "../../services/ImageService";
 import { auth, database } from "../../../firebase";
@@ -19,6 +27,10 @@ import { auth, database } from "../../../firebase";
 import AsyncImage from "../../components/AsyncImage";
 import TextField from "../../components/TextBox";
 import ImageGallary from "../../components/ImagePicker";
+const LATITUDE_DELTA = 0.009;
+const LONGITUDE_DELTA = 0.009;
+const LATITUDE = 37.78825;
+const LONGITUDE = -122.4324;
 export default class ClaimScreen extends Component {
   constructor(props) {
     super(props);
@@ -33,6 +45,9 @@ export default class ClaimScreen extends Component {
       damages: [],
       damagesNew: [],
       lastUpdate: "",
+      location: {},
+      location_title: "",
+      location_description: "",
     };
     this.uid = auth.currentUser.uid;
   }
@@ -58,11 +73,21 @@ export default class ClaimScreen extends Component {
     this.loadData();
   }
 
+  isLocked() {
+    let date = this.state.date;
+    if (date) {
+      var tomorrow = new Date(date);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      if (tomorrow < new Date()) return true;
+      return false;
+    }
+    return false;
+  }
+
   async loadData() {
     await database
       .ref(`/claims/${this.state.vid}/${this.state.cid}`)
-      .once("value")
-      .then((snapshot) => {
+      .on("value", async (snapshot) => {
         this.setState({
           cid: snapshot.key,
           title: snapshot.val().title,
@@ -74,8 +99,30 @@ export default class ClaimScreen extends Component {
           damages: snapshot.val().damages,
           refreshing: false,
         });
-      })
-      .catch((error) => console.log(error));
+
+        await database
+          .ref(`location/${snapshot.key}/locations`)
+          .once("value")
+          .then(async (snapshot) => {
+            var temp_list = [];
+            snapshot.forEach((element) => {
+              temp_list.push(element.val());
+            });
+            console.log(temp_list);
+            this.setState({
+              location: temp_list[0],
+            });
+            let ret = await Location.reverseGeocodeAsync(temp_list[0]);
+            console.log(ret);
+            this.setState({
+              location_title: ret[0].name,
+              location_description:
+                (ret[0].street ? ret[0].street + "," : "") + ret[0].city,
+            });
+          });
+      });
+    // .then()
+    // .catch((error) => console.log(error));
   }
 
   async submit() {
@@ -128,7 +175,7 @@ export default class ClaimScreen extends Component {
         })
         .then(() => {
           // this.props.navigation.navigate("VehicleProfileScreen");
-          // Toast.show("Updated sucessfully");
+          // Toast().show("Updated sucessfully");
         });
     }
   }
@@ -161,6 +208,7 @@ export default class ClaimScreen extends Component {
               }}
               placeholder="title"
               value={this.state?.title}
+              editable={false}
             />
             <FormInputText
               icon="car"
@@ -170,6 +218,7 @@ export default class ClaimScreen extends Component {
               }}
               placeholder="Description"
               value={this.state?.description}
+              editable={!this.isLocked()}
             />
             {/* <Button
               icon={"upload"}
@@ -179,14 +228,12 @@ export default class ClaimScreen extends Component {
             >
               Upload Accident Image
             </Button> */}
-
             <TextField
               icon="camera"
               type="antdesign"
               text={"Accident Image"}
               // value={this.state.model}
             />
-
             {this.state?.image ? (
               <AsyncImage
                 id={this.state?.image}
@@ -194,7 +241,6 @@ export default class ClaimScreen extends Component {
                 showDelete={false}
               />
             ) : null}
-
             {/* <ImageGallarySingle
               modal={this.state.modal}
               closeModal={() => {
@@ -205,23 +251,22 @@ export default class ClaimScreen extends Component {
               }}
               image={this.state.imageNew}
             /> */}
-
             <TextField
               icon="camera"
               type="antdesign"
               text={"Damage Images"}
               // value={this.state.model}
             />
-
-            <Button
-              icon={"upload"}
-              mode=""
-              style={{ marginBottom: 10 }}
-              onPress={() => this.setState({ modal: true })}
-            >
-              Upload Damage Images
-            </Button>
-
+            {!this.isLocked() ? (
+              <Button
+                icon={"upload"}
+                mode=""
+                style={{ marginBottom: 10 }}
+                onPress={() => this.setState({ modal: true })}
+              >
+                Upload Damage Images
+              </Button>
+            ) : null}
             <ImageGallary
               modal={this.state.modal}
               closeModal={() => {
@@ -232,7 +277,6 @@ export default class ClaimScreen extends Component {
                 this.setState({ damagesNew: val });
               }}
             />
-
             <ScrollView
               style={{
                 marginVertical: 10,
@@ -240,41 +284,82 @@ export default class ClaimScreen extends Component {
               horizontal={true}
               showsHorizontalScrollIndicator={false}
             >
-              {this.state?.damages.map((image, index) => {
+              {this.state?.damages?.map((image, index) => {
                 return (
                   <View>
                     <AsyncImage
                       id={image}
                       style={{ width: 200, height: 200 }}
-                      onDeleteImage={() => {
-                        this.state.damages.splice(index, 1);
-                        this.setState({
-                          images: this.state.damages,
-                        });
-                      }}
+                      // onDeleteImage={() => {
+                      //   this.state.damages.splice(index, 1);
+                      //   this.setState({
+                      //     images: this.state.damages,
+                      //   });
+                      // }}
                       showDelete={true}
                     />
                   </View>
                 );
               })}
             </ScrollView>
-
-            <Button
-              icon={"user"}
-              mode="contained"
-              style={{ marginBottom: 10, width: 200, alignSelf: "center" }}
-              onPress={() => {
-                Alert.alert("Confirmation", "Do you want to submit?", [
-                  {
-                    text: "NO",
-                    style: "cancel",
-                  },
-                  { text: "YES", onPress: () => this.submit() },
-                ]);
-              }}
-            >
-              Save changes
-            </Button>
+            {this.state?.location ? (
+              <MapView
+                style={styles.map}
+                provider={PROVIDER_GOOGLE}
+                showUserLocation
+                followUserLocation
+                loadingEnabled
+                showsCompass={true}
+                zoomEnabled
+                region={{
+                  latitude: this.state.location.latitude,
+                  longitude: this.state.location.longitude,
+                  latitudeDelta: LATITUDE_DELTA,
+                  longitudeDelta: LONGITUDE_DELTA,
+                }}
+              >
+                {this.state?.location?.latitude &&
+                this.state?.location?.longitude ? (
+                  <Marker
+                    coordinate={{
+                      latitude: this.state.location.latitude,
+                      longitude: this.state.location.longitude,
+                    }}
+                    title={this.state.location_title}
+                    description={this.state.location_description}
+                  />
+                ) : null}
+              </MapView>
+            ) : null}
+            {!this.isLocked() ? (
+              <Button
+                icon={"content-save-all-outline"}
+                mode="contained"
+                style={{ marginBottom: 10, width: 200, alignSelf: "center" }}
+                onPress={() => {
+                  Alert.alert("Confirmation", "Do you want to submit?", [
+                    {
+                      text: "NO",
+                      style: "cancel",
+                    },
+                    { text: "YES", onPress: () => this.submit() },
+                  ]);
+                }}
+              >
+                Save changes
+              </Button>
+            ) : (
+              <Button
+                icon={"folder-open"}
+                mode="contained"
+                style={{ marginBottom: 10, width: 200, alignSelf: "center" }}
+                onPress={() => {
+                  this.props.navigation.navigate("DriverCompensationScreen");
+                }}
+              >
+                View Compensation
+              </Button>
+            )}
           </View>
         </View>
       </ScrollView>
@@ -286,6 +371,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#EFF1F3",
+  },
+  map: {
+    height: 250,
+    marginBottom: 10,
+  },
+  bubble: {
+    flex: 1,
+    backgroundColor: "rgba(255,255,255,0.7)",
+    paddingHorizontal: 18,
+    paddingVertical: 12,
+    borderRadius: 20,
   },
   content: {
     flex: 1,
