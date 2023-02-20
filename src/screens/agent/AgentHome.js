@@ -16,6 +16,8 @@ import { auth, database } from "../../../firebase";
 import * as Notifications from "expo-notifications";
 import UserApprovalScreen from "./UserApprove";
 import ClaimListScreen from "./ClaimList";
+import AgentClaimScreen from "./AgentClaim";
+import AgentVehicleProfileScreen from "./AgentVehicleProfile";
 import { createStackNavigator } from "react-navigation-stack";
 
 Notifications.setNotificationHandler({
@@ -131,6 +133,20 @@ export const AgentHomeNavigator = createStackNavigator(
       screen: ClaimListScreen,
       navigationOptions: {
         title: "Claim List Screen",
+        headerShown: false,
+      },
+    },
+    AgentClaimScreen: {
+      screen: AgentClaimScreen,
+      navigationOptions: {
+        title: "Agent Claim Screen",
+        headerShown: false,
+      },
+    },
+    AgentVehicleProfileScreen: {
+      screen: AgentVehicleProfileScreen,
+      navigationOptions: {
+        title: "Agent Vehicle Profile Screen",
         headerShown: false,
       },
     },

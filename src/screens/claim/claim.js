@@ -172,6 +172,7 @@ export default class ClaimScreen extends Component {
           status: this.state.status,
           lastUpdate: UpdatedDate,
           damages: files,
+          uid: auth.currentUser.uid,
         })
         .then(() => {
           // this.props.navigation.navigate("VehicleProfileScreen");

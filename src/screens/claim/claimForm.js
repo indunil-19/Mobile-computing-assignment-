@@ -93,6 +93,7 @@ export default class ClaimFormScreen extends Component {
           image: id,
           date: new Date().toString(),
           status: "started",
+          uid: auth.currentUser.uid,
         })
         .then((r) => {
           cid = r.key;
