@@ -125,6 +125,7 @@ export default class ClaimScreen extends Component {
           status: this.state.status,
           lastUpdate: UpdatedDate,
           damages: files,
+          uid: auth.currentUser.uid,
         })
         .then(() => {
           // this.props.navigation.navigate("VehicleProfileScreen");
@@ -240,7 +241,7 @@ export default class ClaimScreen extends Component {
               horizontal={true}
               showsHorizontalScrollIndicator={false}
             >
-              {this.state?.damages.map((image, index) => {
+              {this.state?.damages?.map((image, index) => {
                 return (
                   <View>
                     <AsyncImage
