@@ -20,6 +20,7 @@ import AgentHomeScreen from "./src/screens/agent/AgentHome";
 import AgentRegistrationScreen from "./src/screens/agent/AgentRegistration";
 import AgentNotificationScreen from "./src/screens/agent/AgentNotification";
 import AgentUserProfile from "./src/screens/agent/AgentUserProfile";
+import { database } from "./firebase";
 
 console.disableYellowBox = true;
 
@@ -56,7 +57,7 @@ const BottomTab = createMaterialBottomTabNavigator(
     NotificationScreen: {
       screen: NotificationScreen,
       navigationOptions: {
-        tabBarBadge: 4,
+        tabBarBadge: 0,
         tabBarIcon: ({ tintColor }) => {
           return (
             <View>
@@ -189,7 +190,7 @@ const MainNavigator = createStackNavigator(
     },
   },
   {
-    initialRouteName: "WelcomeScreen",
+    initialRouteName: "BottomTab",
   }
 );
 
