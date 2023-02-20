@@ -42,7 +42,9 @@ export default class AsyncImage extends React.Component {
   async getAndLoadHttpUrl() {
     if (this.state.mounted == true) {
       const ref = storage.ref(
-        `uploads/${auth.currentUser.uid}/${this.props.id}.jpeg`
+        `uploads/${this.props.uid ? this.props.uid : auth.currentUser.uid}/${
+          this.props.id
+        }.jpeg`
       );
       ref
         .getDownloadURL()

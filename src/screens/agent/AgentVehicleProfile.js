@@ -113,6 +113,7 @@ export default class AgentVehicleProfileScreen extends Component {
                 return (
                   <View>
                     <AsyncImage
+                      uid={this.state.uid}
                       id={image}
                       style={{ width: 200, height: 200 }}
                       showDelete={false}

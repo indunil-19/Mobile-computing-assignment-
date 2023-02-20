@@ -49,6 +49,7 @@ export default class AgentClaimScreen extends Component {
       .ref(`/claims/${this.state.vid}/${this.state.cid}`)
       .once("value")
       .then((snapshot) => {
+        console.log(snapshot);
         this.setState({
           cid: snapshot.key,
           title: snapshot.val().title,
@@ -177,6 +178,7 @@ export default class AgentClaimScreen extends Component {
             {this.state?.image ? (
               <AsyncImage
                 id={this.state?.image}
+                uid={this.state.uid}
                 style={{ width: 200, height: 200, marginBottom: 5 }}
                 showDelete={false}
               />
@@ -189,7 +191,7 @@ export default class AgentClaimScreen extends Component {
               // value={this.state.model}
             />
 
-            {this.state.status == "started" && (
+            {/* {this.state.status == "started" && (
               <>
                 <Button
                   icon={"upload"}
@@ -198,20 +200,30 @@ export default class AgentClaimScreen extends Component {
                   onPress={() => this.setState({ modal: true })}
                 >
                   Upload Damage Report
-                </Button>
+                </Button> */}
 
-                <ImageGallarySingle
-                  modal={this.state.modal}
-                  closeModal={() => {
-                    this.setState({ modal: false });
-                  }}
-                  setImage={(val) => {
-                    this.setState({ report: val });
-                  }}
-                  image={this.state.report}
-                />
-              </>
-            )}
+            <ScrollView
+              style={{
+                marginVertical: 10,
+              }}
+              horizontal={true}
+              showsHorizontalScrollIndicator={false}
+            >
+              {this.state?.damages?.map((image, index) => {
+                return (
+                  <View>
+                    <AsyncImage
+                      id={image}
+                      uid={this.state?.uid}
+                      style={{ width: 200, height: 200 }}
+                      showDelete={false}
+                    />
+                  </View>
+                );
+              })}
+            </ScrollView>
+            {/* </>
+            )} */}
             {/* {this.state?.status != "started" && (
               <AsyncImage
                 id={this.state?.report}
