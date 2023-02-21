@@ -119,7 +119,6 @@ export default class ClaimScreen extends Component {
             });
           });
       });
-
   }
 
   async submit() {
@@ -252,7 +251,7 @@ export default class ClaimScreen extends Component {
             <TextField
               icon="camera"
               type="antdesign"
-              text={"Damage Images"}
+              text={"Damage Images & Area Images"}
               // value={this.state.model}
             />
             {!this.isLocked() ? (
@@ -262,7 +261,7 @@ export default class ClaimScreen extends Component {
                 style={{ marginBottom: 10 }}
                 onPress={() => this.setState({ modal: true })}
               >
-                Upload Damage Images
+                Upload Damage Images & Area Images
               </Button>
             ) : null}
             <ImageGallary
@@ -294,7 +293,7 @@ export default class ClaimScreen extends Component {
                       //     images: this.state.damages,
                       //   });
                       // }}
-                      showDelete={true}
+                      showDelete={!this.isLocked() ? true : false}
                     />
                   </View>
                 );

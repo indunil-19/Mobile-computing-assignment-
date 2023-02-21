@@ -29,6 +29,17 @@ export default class ClaimListScreen extends Component {
   async componentDidMount() {
     this.loadData();
   }
+  isSubmitted(date) {
+    if (date) {
+      var tomorrow = new Date(date);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      if (tomorrow < new Date()) {
+        return true;
+      }
+      return false;
+    }
+    return false;
+  }
   async loadData() {
     await database
       .ref(`/claims/`)
@@ -38,17 +49,19 @@ export default class ClaimListScreen extends Component {
         snapshot.forEach((vehicle) => {
           vehicle.forEach((claim) => {
             if (claim.val().status == this.status) {
-              const data = {
-                vid: vehicle.key,
-                cid: claim.key,
-                uid: claim.val().uid,
-                date: claim.val().date,
-                description: claim.val().description,
-                image: claim.val().image,
-                status: claim.val().status,
-                title: claim.val().title,
-              };
-              temp_list.push(data);
+              if (this.isSubmitted(claim.val().date)) {
+                const data = {
+                  vid: vehicle.key,
+                  cid: claim.key,
+                  uid: claim.val().uid,
+                  date: claim.val().date,
+                  description: claim.val().description,
+                  image: claim.val().image,
+                  status: claim.val().status,
+                  title: claim.val().title,
+                };
+                temp_list.push(data);
+              }
             }
           });
         });
