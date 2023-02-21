@@ -48,10 +48,10 @@ export default class HomeScreen extends Component {
     Notifications.addNotificationReceivedListener(async (notification) => {
       // console.log(await Notifications.getBadgeCountAsync());
       // await Notifications.setBadgeCountAsync(1);
-      await database.ref(`/notiifications/${auth.currentUser.uid}/`).push({
-        title: notification.request.content.title,
-        body: notification.request.content.body,
-      });
+      // await database.ref(`/notiifications/${auth.currentUser.uid}/`).push({
+      //   title: notification.request.content.title,
+      //   body: notification.request.content.body,
+      // });
     });
 
     // // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)

@@ -4,16 +4,20 @@ import { Button } from "react-native-paper";
 import FormInput from "../../components/FormInput";
 import FormInputText from "../../components/FormInputTextArea";
 import { database } from "../../../firebase";
-
-export default class DriverCompensationScreen extends Component {
+export default class CompensationScreen extends Component {
   constructor(props) {
     super(props);
     this.state = {
       cid: this.props.navigation.getParam("cid"),
+      title: this.props.navigation.getParam("title"),
+      uid: this.props.navigation.getParam("uid"),
+      vid: this.props.navigation.getParam("vid"),
       description: "",
       compensation: "",
+      pushToken: "",
     };
   }
+
   async componentDidMount() {
     this.loadData();
   }
@@ -27,7 +31,69 @@ export default class DriverCompensationScreen extends Component {
           compensation: snapshot.val().compensation,
         });
       });
+
+    await database
+      .ref(`/users/${this.state.uid}`)
+      .on("value", async (snapshot) => {
+        this.setState({
+          pushToken: snapshot.val().token,
+        });
+      });
   }
+
+  async sendPushNotification(expoPushToken) {
+    var title = "Compensation Added";
+    var body = `Compensation to your claim ${this.state.title} was added`;
+
+    await database.ref(`/notiifications/${this.state.uid}/`).push({
+      title: title,
+      body: body,
+    });
+    const message = {
+      to: expoPushToken,
+      title: title,
+      body: body,
+    };
+
+    await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    });
+  }
+
+  async submit() {
+    this.valid = false;
+
+    // // check if all required fields are filled
+    if (this.state.compensation != "" && this.state.description != "") {
+      this.valid = true;
+    } else {
+      alert("All fields are required👋");
+    }
+
+    if (this.valid) {
+      await database
+        .ref(`/compensation/${this.state.cid}`)
+        .set({
+          description: this.state.description,
+          compensation: this.state.compensation,
+        })
+        .then(async () => {
+          await database
+            .ref(`/claims/${this.state.vid}/${this.state.cid}`)
+            .update({
+              status: "Finished",
+            });
+          this.sendPushNotification(this.state.pushToken);
+        });
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -37,7 +103,7 @@ export default class DriverCompensationScreen extends Component {
             alignSelf="center"
             style={styles.image}
           />
-          <Text style={styles.logo}>Claim Compensation</Text>
+          <Text style={styles.logo}>Add Compensation</Text>
 
           <FormInputText
             icon="car"
@@ -47,7 +113,6 @@ export default class DriverCompensationScreen extends Component {
             }}
             placeholder="Description"
             value={this.state?.description}
-            editable={false}
           />
           <FormInput
             icon="car"
@@ -57,8 +122,24 @@ export default class DriverCompensationScreen extends Component {
             }}
             placeholder="Estimated compensation"
             value={this.state?.compensation}
-            editable={false}
           />
+
+          <Button
+            icon={"content-save-all-outline"}
+            mode="contained"
+            style={{ marginBottom: 10, width: 200, alignSelf: "center" }}
+            onPress={() => {
+              Alert.alert("Confirmation", "Do you want to submit?", [
+                {
+                  text: "NO",
+                  style: "cancel",
+                },
+                { text: "YES", onPress: () => this.submit() },
+              ]);
+            }}
+          >
+            Submit
+          </Button>
         </View>
       </View>
     );

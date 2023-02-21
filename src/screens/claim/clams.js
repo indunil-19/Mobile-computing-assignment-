@@ -118,10 +118,10 @@ export default class ClaimsScreen extends Component {
                           </Text> */}
                         </View>
 
-                        {item.status == "approved" ? (
+                        {item.status == "Finished" ? (
                           <View style={styles.icon_text_view}>
                             {/* <Icon name="moon" type="feather" color="green" /> */}
-                            <Text style={{ color: "green" }}> Approved</Text>
+                            <Text style={{ color: "green" }}> Finished</Text>
                           </View>
                         ) : (
                           <View style={styles.icon_text_view}>

@@ -18,6 +18,8 @@ import UserApprovalScreen from "./UserApprove";
 import ClaimListScreen from "./ClaimList";
 import AgentClaimScreen from "./AgentClaim";
 import AgentVehicleProfileScreen from "./AgentVehicleProfile";
+import DriverTrackScreen from "./DriverTrack";
+import CompensationScreen from "./Compensation";
 import { createStackNavigator } from "react-navigation-stack";
 
 Notifications.setNotificationHandler({
@@ -147,6 +149,20 @@ export const AgentHomeNavigator = createStackNavigator(
       screen: AgentVehicleProfileScreen,
       navigationOptions: {
         title: "Agent Vehicle Profile Screen",
+        headerShown: false,
+      },
+    },
+    DriverTrackScreen: {
+      screen: DriverTrackScreen,
+      navigationOptions: {
+        title: "Driver Track",
+        headerShown: false,
+      },
+    },
+    CompensationScreen: {
+      screen: CompensationScreen,
+      navigationOptions: {
+        title: "Compensation Screen",
         headerShown: false,
       },
     },

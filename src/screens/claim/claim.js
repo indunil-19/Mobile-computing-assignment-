@@ -355,7 +355,9 @@ export default class ClaimScreen extends Component {
                 mode="contained"
                 style={{ marginBottom: 10, width: 200, alignSelf: "center" }}
                 onPress={() => {
-                  this.props.navigation.navigate("DriverCompensationScreen");
+                  this.props.navigation.navigate("DriverCompensationScreen", {
+                    cid: this.state.cid,
+                  });
                 }}
               >
                 View Compensation

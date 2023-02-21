@@ -190,7 +190,7 @@ const MainNavigator = createStackNavigator(
     },
   },
   {
-    initialRouteName: "BottomTab",
+    initialRouteName: "WelcomeScreen",
   }
 );
 

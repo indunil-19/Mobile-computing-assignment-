@@ -132,7 +132,11 @@ export default class AgentClaimScreen extends Component {
                 icon={"map"}
                 mode="contained"
                 style={{ marginBottom: 10, width: "45%", alignSelf: "center" }}
-                onPress={() => {}}
+                onPress={() =>
+                  this.props.navigation.navigate("DriverTrackScreen", {
+                    cid: this.state.cid,
+                  })
+                }
               >
                 Track
               </Button>
@@ -247,16 +251,22 @@ export default class AgentClaimScreen extends Component {
               mode="contained"
               style={{ marginBottom: 10, width: 200, alignSelf: "center" }}
               onPress={() => {
-                Alert.alert("Confirmation", "Do you want to submit?", [
-                  {
-                    text: "NO",
-                    style: "cancel",
-                  },
-                  { text: "YES", onPress: () => this.submit() },
-                ]);
+                // Alert.alert("Confirmation", "Do you want to submit?", [
+                //   {
+                //     text: "NO",
+                //     style: "cancel",
+                //   },
+                //   { text: "YES", onPress: () => this.submit() },
+                // ]);
+                this.props.navigation.navigate("CompensationScreen", {
+                  cid: this.state.cid,
+                  title: this.state.title,
+                  uid: this.state.uid,
+                  vid: this.state.vid,
+                });
               }}
             >
-              Save changes
+              Add Compensation
             </Button>
           </View>
         </View>
