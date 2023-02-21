@@ -51,8 +51,6 @@ export default class ClaimListScreen extends Component {
             }
           });
         });
-        console.log(temp_list);
-
         this.setState({
           allClaims: temp_list,
         });
@@ -60,21 +58,7 @@ export default class ClaimListScreen extends Component {
       .catch((error) => console.log(error));
     this.setState({ refreshing: false });
   }
-  // async approveUser(userID) {
-  //   await database
-  //     .ref(`/users/${userID}`)
-  //     .update({ valid: true })
-  //     .then(() => {
-  //       const updatedList = this.state.pendingUsers.filter(
-  //         (item) => item.uid != userID
-  //       );
-  //       this.setState({
-  //         pendingUsers: updatedList,
-  //       });
-  //       //Toast.show("approved sucessfully");
-  //     })
-  //     .catch((error) => console.log(error));
-  // }
+
   render() {
     return (
       <View style={styles.container}>

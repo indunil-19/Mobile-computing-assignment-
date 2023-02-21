@@ -70,10 +70,6 @@ export default class AgentRegistrationScreen extends Component {
         .catch((error) => {
           this.setState({ error: error.message });
         });
-
-      // const { currentUser } = auth;
-      // console.log(currentUser);
-      // await database.ref(`users/${currentUser.uid}/`).set(data);
     }
   }
 

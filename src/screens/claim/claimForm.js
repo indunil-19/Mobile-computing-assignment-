@@ -235,7 +235,6 @@ TaskManager.defineTask(LOCATION_TRACKING, async ({ data, error }) => {
       longitude: locations[0].coords.longitude,
     };
 
-    console.log(vid, cid);
     await database
       .ref(`/location/${cid}`)
       .once("value")

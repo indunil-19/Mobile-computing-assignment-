@@ -10,7 +10,6 @@ import AsyncImage from "../../components/AsyncImage";
 export default class VehicleProfileEdit extends Component {
   constructor(props) {
     super(props);
-    // console.log(this.props.navigation.getParam("images"));
     this.state = {
       vid: this.props.navigation.getParam("vid"),
       regId: this.props.navigation.getParam("regId"),

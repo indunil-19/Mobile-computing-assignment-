@@ -108,12 +108,10 @@ export default class ClaimScreen extends Component {
             snapshot.forEach((element) => {
               temp_list.push(element.val());
             });
-            console.log(temp_list);
             this.setState({
               location: temp_list[0],
             });
             let ret = await Location.reverseGeocodeAsync(temp_list[0]);
-            console.log(ret);
             this.setState({
               location_title: ret[0].name,
               location_description:
@@ -121,8 +119,7 @@ export default class ClaimScreen extends Component {
             });
           });
       });
-    // .then()
-    // .catch((error) => console.log(error));
+
   }
 
   async submit() {

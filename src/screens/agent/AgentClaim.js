@@ -34,8 +34,8 @@ export default class AgentClaimScreen extends Component {
       damages: [],
       damagesNew: [],
       lastUpdate: "",
-      report: "",
-      payment: "",
+      comdesc: "",
+      compensation: "",
     };
     this.uid = auth.currentUser.uid;
   }
@@ -49,7 +49,6 @@ export default class AgentClaimScreen extends Component {
       .ref(`/claims/${this.state.vid}/${this.state.cid}`)
       .once("value")
       .then((snapshot) => {
-        console.log(snapshot);
         this.setState({
           cid: snapshot.key,
           title: snapshot.val().title,
@@ -59,40 +58,47 @@ export default class AgentClaimScreen extends Component {
           status: snapshot.val().status,
           lastUpdate: snapshot.val().lastUpdate,
           damages: snapshot.val().damages,
-          report: snapshot.val().report,
-          payment: snapshot.val().payment,
           refreshing: false,
         });
       })
       .catch((error) => console.log(error));
-  }
-
-  async submit() {
-    this.valid = false;
-
-    // check if all required fields are filled
-    if (this.state?.report) {
-      this.valid = true;
-    } else {
-      alert("Damage Report is required👋");
-    }
-
-    if (this.valid) {
-      const id = uuid.v4();
-      uriToBlob(this.state?.report).then((blob) => {
-        uploadToFirebase(blob, id);
+    await database
+      .ref(`/compensation/${this.state.cid}`)
+      .once("value")
+      .then((snapshot) => {
+        this.setState({
+          compensation: snapshot.val().compensation,
+          comdesc: snapshot.val().description,
+        });
       });
-
-      await database
-        .ref(`/claims/${this.state.vid}/${this.state.cid}`)
-        .update({
-          status: "checked",
-          payment: this.state.payment,
-          report: id,
-        })
-        .then(() => {});
-    }
   }
+
+  // async submit() {
+  //   this.valid = false;
+
+  //   // check if all required fields are filled
+  //   if (this.state?.report) {
+  //     this.valid = true;
+  //   } else {
+  //     alert("Damage Report is required👋");
+  //   }
+
+  //   if (this.valid) {
+  //     const id = uuid.v4();
+  //     uriToBlob(this.state?.report).then((blob) => {
+  //       uploadToFirebase(blob, id);
+  //     });
+
+  //     await database
+  //       .ref(`/claims/${this.state.vid}/${this.state.cid}`)
+  //       .update({
+  //         status: "checked",
+  //         payment: this.state.payment,
+  //         report: id,
+  //       })
+  //       .then(() => {});
+  //   }
+  // }
   render() {
     return (
       <ScrollView
@@ -155,9 +161,6 @@ export default class AgentClaimScreen extends Component {
               editable={false}
               icon="car"
               type="antdesign"
-              onChangeText={(val) => {
-                this.setState({ title: val });
-              }}
               placeholder="title"
               value={this.state?.title}
             />
@@ -165,9 +168,6 @@ export default class AgentClaimScreen extends Component {
               editable={false}
               icon="car"
               type="antdesign"
-              onChangeText={(val) => {
-                this.setState({ description: val });
-              }}
               placeholder="Description"
               value={this.state?.description}
             />
@@ -235,17 +235,26 @@ export default class AgentClaimScreen extends Component {
                 showDelete={false}
               />
             )} */}
-            <FormInput
-              icon="payments"
-              type="material"
-              keyboardType="phone-pad"
-              onChangeText={(val) => {
-                this.setState({ payment: val });
-              }}
-              placeholder="payment"
-              value={this.state?.payment}
-              editable={this.state.status == "started"}
-            />
+            {this.state?.status == "finished" && (
+              <>
+                <FormInputText
+                  icon="payments"
+                  type="material"
+                  keyboardType="phone-pad"
+                  placeholder="description"
+                  value={this.state?.comdesc}
+                  editable={false}
+                />
+                <FormInput
+                  icon="payments"
+                  type="material"
+                  keyboardType="phone-pad"
+                  placeholder="compensation"
+                  value={this.state?.compensation}
+                  editable={false}
+                />
+              </>
+            )}
             <Button
               icon={"file"}
               mode="contained"

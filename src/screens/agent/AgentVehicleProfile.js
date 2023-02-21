@@ -36,7 +36,6 @@ export default class AgentVehicleProfileScreen extends Component {
       .ref(`/vehicles/${this.state.uid}/${this.state.vid}`)
       .once("value")
       .then((snapshot) => {
-        // console.log(snapshot.val());
         this.setState({
           regId: snapshot.val().regId,
           model: snapshot.val().model,
@@ -108,7 +107,6 @@ export default class AgentVehicleProfileScreen extends Component {
               horizontal={true}
               showsHorizontalScrollIndicator={false}
             >
-              {console.log(this.state?.images)}
               {this.state?.images?.map((image) => {
                 return (
                   <View>

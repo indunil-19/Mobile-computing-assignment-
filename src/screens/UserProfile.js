@@ -25,7 +25,6 @@ export default class UserProfile extends Component {
       .ref(`/users/${auth.currentUser.uid}`)
       .once("value")
       .then((snapshot) => {
-        console.log(snapshot.val());
         this.setState({
           email: snapshot.val().email,
           firstname: snapshot.val().firstname,

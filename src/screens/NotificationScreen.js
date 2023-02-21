@@ -20,7 +20,6 @@ export default class NotificationScreen extends Component {
         var temp_list = [];
         snapshot.forEach((element) => {
           if (element.val().title && element.val().body) {
-            console.log(element);
             temp_list.push({
               title: element.val().title,
               body: element.val().body,

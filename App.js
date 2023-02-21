@@ -40,6 +40,9 @@ const BottomTab = createMaterialBottomTabNavigator(
             </View>
           );
         },
+        tabBarLabel: () => {
+          return <Text style={{ color: "#000000", elevation: 20 }}>Home</Text>;
+        },
       },
     },
     UserProfile: {
@@ -50,6 +53,11 @@ const BottomTab = createMaterialBottomTabNavigator(
             <View>
               <Icon name="user" type="feather" color={tintColor} />
             </View>
+          );
+        },
+        tabBarLabel: () => {
+          return (
+            <Text style={{ color: "#000000", elevation: 20 }}>Profile</Text>
           );
         },
       },
@@ -65,6 +73,13 @@ const BottomTab = createMaterialBottomTabNavigator(
             </View>
           );
         },
+        tabBarLabel: () => {
+          return (
+            <Text style={{ color: "#000000", elevation: 20 }}>
+              Notifications
+            </Text>
+          );
+        },
       },
     },
   },
@@ -75,6 +90,7 @@ const BottomTab = createMaterialBottomTabNavigator(
     barStyle: {
       backgroundColor: "#373E45",
       elevation: 10,
+      height: "7%",
     },
   }
 );
@@ -91,6 +107,9 @@ const AgentBottomTab = createMaterialBottomTabNavigator(
             </View>
           );
         },
+        tabBarLabel: () => {
+          return <Text style={{ color: "#000000", elevation: 20 }}>Home</Text>;
+        },
       },
     },
     UserProfile: {
@@ -103,17 +122,9 @@ const AgentBottomTab = createMaterialBottomTabNavigator(
             </View>
           );
         },
-      },
-    },
-    NotificationScreen: {
-      screen: AgentNotificationScreen,
-      navigationOptions: {
-        tabBarBadge: 4,
-        tabBarIcon: ({ tintColor }) => {
+        tabBarLabel: () => {
           return (
-            <View>
-              <Icon name="notifications" type="ionicons" color={tintColor} />
-            </View>
+            <Text style={{ color: "#000000", elevation: 20 }}>Profile</Text>
           );
         },
       },
@@ -121,11 +132,12 @@ const AgentBottomTab = createMaterialBottomTabNavigator(
   },
   {
     initialRouteName: "HomeScreen",
-    activeColor: "#74A4D7",
+    activeColor: "#000000",
     inactiveColor: "white",
     barStyle: {
       backgroundColor: "#373E45",
       elevation: 10,
+      height: "7%",
     },
   }
 );

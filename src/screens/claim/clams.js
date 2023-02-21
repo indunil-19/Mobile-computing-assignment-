@@ -32,7 +32,6 @@ export default class ClaimsScreen extends Component {
 
   async loadData() {
     await database.ref(`/claims/${this.state.vid}`).on("value", (snapshot) => {
-      // console.log(snapshot);
       var temp_list = [];
       snapshot.forEach((element) => {
         const data = {

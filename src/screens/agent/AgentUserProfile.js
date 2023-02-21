@@ -26,7 +26,6 @@ export default class AgentUserProfile extends Component {
       .ref(`/users/${auth.currentUser.uid}`)
       .once("value")
       .then((snapshot) => {
-        console.log(snapshot.val());
         this.setState({
           ID: snapshot.val().ID,
           email: snapshot.val().email,
