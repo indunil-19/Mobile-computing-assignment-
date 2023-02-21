@@ -87,7 +87,7 @@ export default class CompensationScreen extends Component {
           await database
             .ref(`/claims/${this.state.vid}/${this.state.cid}`)
             .update({
-              status: "Finished",
+              status: "finished",
             });
           this.sendPushNotification(this.state.pushToken);
         });
@@ -106,8 +106,8 @@ export default class CompensationScreen extends Component {
           <Text style={styles.logo}>Add Compensation</Text>
 
           <FormInputText
-            icon="car"
-            type="antdesign"
+            icon="payments"
+            type="material"
             onChangeText={(val) => {
               this.setState({ description: val });
             }}
@@ -115,8 +115,8 @@ export default class CompensationScreen extends Component {
             value={this.state?.description}
           />
           <FormInput
-            icon="car"
-            type="antdesign"
+            icon="payments"
+            type="material"
             onChangeText={(val) => {
               this.setState({ compensation: val });
             }}

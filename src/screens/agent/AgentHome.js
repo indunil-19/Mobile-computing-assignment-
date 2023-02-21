@@ -54,7 +54,7 @@ export default class AgentHomeScreen extends Component {
         <View style={{ flex: 4 }}>
           <ButtonComponent
             text="Claim List"
-            icon="user"
+            icon="menuunfold"
             type="antdesign"
             onPress={() =>
               this.props.navigation.navigate("ClaimListScreen", {
@@ -64,7 +64,7 @@ export default class AgentHomeScreen extends Component {
           />
 
           <ButtonComponent
-            icon="menuunfold"
+            icon="user"
             type="antdesign"
             text="User Approve"
             onPress={() =>
