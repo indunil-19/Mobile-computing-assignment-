@@ -24,6 +24,7 @@ export default class ClaimListScreen extends Component {
       allClaims: [],
       refreshing: false,
     };
+    this.status = this.props.navigation.getParam("status");
   }
   async componentDidMount() {
     this.loadData();
@@ -36,7 +37,7 @@ export default class ClaimListScreen extends Component {
         var temp_list = [];
         snapshot.forEach((vehicle) => {
           vehicle.forEach((claim) => {
-            if (claim.val().status != "finished") {
+            if (claim.val().status == this.status) {
               const data = {
                 vid: vehicle.key,
                 cid: claim.key,
@@ -120,7 +121,7 @@ export default class ClaimListScreen extends Component {
                           </Text> */}
                       </View>
 
-                      {item.status == "approved" ? (
+                      {item.status == "finished" ? (
                         <View style={styles.icon_text_view}>
                           {/* <Icon name="moon" type="feather" color="green" /> */}
                           <Text style={{ color: "green" }}> Approved</Text>

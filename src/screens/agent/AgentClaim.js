@@ -275,7 +275,9 @@ export default class AgentClaimScreen extends Component {
                 });
               }}
             >
-              Add Compensation
+              {`${
+                this.state?.status == "finished" ? "Edit" : "Add"
+              } Compensation`}
             </Button>
           </View>
         </View>

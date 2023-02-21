@@ -59,10 +59,21 @@ export default class AgentHomeScreen extends Component {
             onPress={() =>
               this.props.navigation.navigate("ClaimListScreen", {
                 vid: this.state.vid,
+                status: "started",
               })
             }
           />
-
+          <ButtonComponent
+            text="Closed Claims"
+            icon="menuunfold"
+            type="antdesign"
+            onPress={() =>
+              this.props.navigation.navigate("ClaimListScreen", {
+                vid: this.state.vid,
+                status: "finished",
+              })
+            }
+          />
           <ButtonComponent
             icon="user"
             type="antdesign"
