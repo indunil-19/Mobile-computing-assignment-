@@ -18,7 +18,6 @@ import NotificationScreen from "./src/screens/NotificationScreen";
 import SignupSwitcher from "./src/screens/SignupSwitcher";
 import AgentHomeScreen from "./src/screens/agent/AgentHome";
 import AgentRegistrationScreen from "./src/screens/agent/AgentRegistration";
-import AgentNotificationScreen from "./src/screens/agent/AgentNotification";
 import AgentUserProfile from "./src/screens/agent/AgentUserProfile";
 import { database } from "./firebase";
 
