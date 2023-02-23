@@ -72,9 +72,9 @@ const styles = StyleSheet.create({
   inputs: {
     height: 50,
     marginLeft: 10,
-    width: "80%",
     height: 200,
     textAlignVertical: "top",
+    paddingRight: 100,
   },
 });
 

@@ -99,6 +99,7 @@ export default class AgentClaimScreen extends Component {
   //       .then(() => {});
   //   }
   // }
+
   render() {
     return (
       <ScrollView
@@ -191,7 +192,7 @@ export default class AgentClaimScreen extends Component {
             <TextField
               icon="camera"
               type="antdesign"
-              text={"Damage Images"}
+              text={"Damage Images and Area Images"}
               // value={this.state.model}
             />
 

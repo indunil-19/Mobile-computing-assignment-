@@ -77,7 +77,7 @@ export default class DriverTrackScreen extends Component {
             <Marker
               coordinate={location}
               pinColor={index == 0 ? "red" : "blue"}
-              //   title={this.state.place_list[index].location_title}
+              // title={getLocation(location)[0].name}
             />
           ))}
         </MapView>
@@ -91,3 +91,10 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
   },
 });
+
+// export const getLocation = (ele) => {
+//   return new Promise(async (resolve, reject) => {
+//     let ret = await Location.reverseGeocodeAsync(ele);
+//     resolve(ret);
+//   });
+// };
